@@ -1,0 +1,17 @@
+# Dependencies
+node_modules/
+
+# Local tools & wrappers
+mingit/
+powershell.cmd
+
+# Build outputs
+dist/
+build/
+coverage/
+
+# OS & Editor files
+.DS_Store
+.vscode/
+.idea/
+*.log
