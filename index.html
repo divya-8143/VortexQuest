@@ -5,30 +5,26 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>VortexQuest - 2D Action RPG</title>
   <style>
-    * { box-sizing: border-box; }
-    body {
-      margin: 0;
-      padding: 0;
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body {
+      width: 100vw;
+      height: 100vh;
       background-color: #0b0e14;
       color: #e6edf3;
       font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      min-height: 100vh;
       overflow: hidden;
     }
     #game-container {
       position: relative;
-      border: 2px solid #30363d;
-      border-radius: 8px;
-      box-shadow: 0 12px 40px rgba(0,0,0,0.9);
+      width: 100vw;
+      height: 100vh;
       overflow: hidden;
       background-color: #0d1117;
     }
     #game-canvas {
       display: block;
+      width: 100vw;
+      height: 100vh;
       background-color: #0d1117;
     }
   </style>
@@ -36,7 +32,7 @@
 <body>
 
   <div id="game-container">
-    <canvas id="game-canvas" width="1024" height="576"></canvas>
+    <canvas id="game-canvas"></canvas>
   </div>
 
   <script type="module" src="/src/main.ts"></script>

@@ -170,18 +170,15 @@ export class Canvas2DRenderer {
           break;
 
         case 'HOUSE':
-          // House Body
           ctx.fillStyle = deco.color || '#3d271d';
           ctx.fillRect(deco.x, deco.y, deco.w || 120, deco.h || 100);
           ctx.strokeStyle = '#5a3d2e'; ctx.lineWidth = 3; ctx.strokeRect(deco.x, deco.y, deco.w || 120, deco.h || 100);
-          // Roof
           ctx.fillStyle = '#8b261d';
           ctx.beginPath();
           ctx.moveTo(deco.x - 10, deco.y);
           ctx.lineTo(deco.x + (deco.w || 120) / 2, deco.y - 40);
           ctx.lineTo(deco.x + (deco.w || 120) + 10, deco.y);
           ctx.closePath(); ctx.fill();
-          // Label
           if (deco.label) {
             ctx.fillStyle = '#ffffff'; ctx.font = 'bold 12px system-ui'; ctx.textAlign = 'center';
             ctx.fillText(deco.label, deco.x + (deco.w || 120) / 2, deco.y + (deco.h || 100) / 2);
@@ -189,22 +186,17 @@ export class Canvas2DRenderer {
           break;
 
         case 'TREE':
-          // Trunk
           ctx.fillStyle = '#4a2e1b';
           ctx.fillRect(deco.x - 8, deco.y - 15, 16, 30);
-          // Leaf Crown
           ctx.fillStyle = deco.color || '#1e4620';
           ctx.beginPath(); ctx.arc(deco.x, deco.y - 35, deco.w || 50, 0, Math.PI * 2); ctx.fill();
           ctx.strokeStyle = '#122e14'; ctx.lineWidth = 2; ctx.stroke();
           break;
 
         case 'LANTERN':
-          // Pole
           ctx.fillStyle = '#30363d'; ctx.fillRect(deco.x - 3, deco.y - 40, 6, 40);
-          // Lantern Glow Circle
           ctx.fillStyle = 'rgba(227, 179, 65, 0.15)';
           ctx.beginPath(); ctx.arc(deco.x, deco.y - 45, 50, 0, Math.PI * 2); ctx.fill();
-          // Lamp Light
           ctx.fillStyle = deco.color || '#e3b341';
           ctx.beginPath(); ctx.arc(deco.x, deco.y - 45, 8, 0, Math.PI * 2); ctx.fill();
           break;
@@ -338,7 +330,7 @@ export class Canvas2DRenderer {
     ctx.fillStyle = '#ffffff'; ctx.font = '10px system-ui';
     ctx.fillText(`XP: ${player.stats.xp} / ${player.stats.maxXp}`, 30, 89);
 
-    // Top-Center Quick Action Menu Bar
+    // Top-Center Quick Action Navigation Bar
     ctx.fillStyle = 'rgba(22, 27, 34, 0.85)';
     ctx.fillRect(this.canvas.width / 2 - 180, 15, 360, 35);
     ctx.strokeStyle = '#30363d'; ctx.strokeRect(this.canvas.width / 2 - 180, 15, 360, 35);
@@ -346,33 +338,36 @@ export class Canvas2DRenderer {
     ctx.fillStyle = '#c9d1d9'; ctx.font = '12px system-ui'; ctx.textAlign = 'center';
     ctx.fillText('🎒[I] Inv   ⚡[K] Skills   📜[L] Quests   👤[C] Hero   📖[M] Guide', this.canvas.width / 2, 37);
 
-    // Gold & Zone Info (Top-Right)
+    // Gold & Zone Info (Top-Right Dynamic Positioning)
+    const goldCardX = this.canvas.width - 275;
     ctx.fillStyle = 'rgba(22, 27, 34, 0.85)';
-    ctx.fillRect(this.canvas.width - 280, 15, 200, 70);
-    ctx.strokeRect(this.canvas.width - 280, 15, 200, 70);
+    ctx.fillRect(goldCardX, 15, 200, 70);
+    ctx.strokeRect(goldCardX, 15, 200, 70);
 
     ctx.fillStyle = '#e3b341'; ctx.font = 'bold 15px system-ui'; ctx.textAlign = 'right';
-    ctx.fillText(`💰 Gold: ${player.stats.gold}`, this.canvas.width - 95, 38);
+    ctx.fillText(`💰 Gold: ${player.stats.gold}`, goldCardX + 185, 38);
     ctx.fillStyle = '#bc8cff'; ctx.font = '13px system-ui';
-    ctx.fillText(`📍 ${currentZone.name}`, this.canvas.width - 95, 62);
+    ctx.fillText(`📍 ${currentZone.name}`, goldCardX + 185, 62);
 
-    // INTERACTIVE PAUSE BUTTON ⏸️ (Top-Right: x: 960-1010, y: 15-55)
+    // INTERACTIVE PAUSE BUTTON ⏸️ (Top-Right: Dynamic positioning)
+    const pauseBtnX = this.canvas.width - 65;
     ctx.fillStyle = 'rgba(22, 27, 34, 0.9)';
-    ctx.fillRect(960, 15, 50, 40);
+    ctx.fillRect(pauseBtnX, 15, 50, 40);
     ctx.strokeStyle = '#58a6ff';
     ctx.lineWidth = 2;
-    ctx.strokeRect(960, 15, 50, 40);
+    ctx.strokeRect(pauseBtnX, 15, 50, 40);
 
     ctx.fillStyle = '#ffffff'; ctx.font = '22px system-ui'; ctx.textAlign = 'center';
-    ctx.fillText('⏸️', 985, 43);
+    ctx.fillText('⏸️', pauseBtnX + 25, 43);
 
-    // MINIMAP RADAR OVERLAY (Bottom-Right: x: 880, y: 430, radius: 55)
-    const mapX = 950; const mapY = 490; const mapR = 55;
+    // MINIMAP RADAR OVERLAY (Bottom-Right Dynamic Positioning)
+    const mapX = this.canvas.width - 75;
+    const mapY = this.canvas.height - 110;
+    const mapR = 55;
     ctx.save();
     ctx.beginPath(); ctx.arc(mapX, mapY, mapR, 0, Math.PI * 2); ctx.clip();
     ctx.fillStyle = 'rgba(11, 14, 20, 0.9)'; ctx.fillRect(mapX - mapR, mapY - mapR, mapR * 2, mapR * 2);
 
-    // Minimap blips
     const scaleX = (mapR * 1.6) / currentZone.width;
     const scaleY = (mapR * 1.6) / currentZone.height;
 
@@ -397,8 +392,6 @@ export class Canvas2DRenderer {
     ctx.restore();
     ctx.strokeStyle = '#58a6ff'; ctx.lineWidth = 2;
     ctx.beginPath(); ctx.arc(mapX, mapY, mapR, 0, Math.PI * 2); ctx.stroke();
-    ctx.fillStyle = '#ffffff'; ctx.font = 'bold 10px system-ui'; ctx.textAlign = 'center';
-    ctx.fillText('RADAR', mapX, mapY + mapR + 12);
 
     // Boss Health Bar Overlay (if Boss in zone)
     const boss = currentZone.enemies.find(e => e.isBoss && e.hp > 0);
