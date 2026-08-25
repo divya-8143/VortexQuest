@@ -8,6 +8,7 @@ export class GameMenuContainer {
   private containerEl: HTMLElement | null = null;
   private questTrackerEl: HTMLElement | null = null;
   private hotbarEl: HTMLElement | null = null;
+  private topNavEl: HTMLElement | null = null;
   private mainMenuEl: HTMLElement | null = null;
   private manualModalEl: HTMLElement | null = null;
 
@@ -39,9 +40,7 @@ export class GameMenuContainer {
       <div id="manual-card-modal" class="rpg-card" style="display:none;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:920px;height:520px;pointer-events:auto;flex-direction:column;padding:20px;z-index:30;box-shadow:0 10px 40px rgba(0,0,0,0.9);">
         <div class="rpg-header" style="color:#ffd700;font-size:26px;font-weight:bold;text-align:center;margin-bottom:16px;">📖 VORTEX QUEST - GAME MANUAL & INSTRUCTIONS</div>
 
-        <!-- 4 Distinct Cards Grid -->
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;flex:1;overflow-y:auto;padding-right:4px;">
-          <!-- Card 1: Story & Objective -->
           <div class="rpg-card" style="padding:14px;background:rgba(22,27,34,0.9);">
             <div class="rpg-header" style="color:#ffd700;font-size:16px;font-weight:bold;margin-bottom:8px;">📜 1. STORY & OBJECTIVE</div>
             <ul style="padding-left:18px;font-size:13px;line-height:1.5;color:#e6edf3;">
@@ -51,7 +50,6 @@ export class GameMenuContainer {
             </ul>
           </div>
 
-          <!-- Card 2: Skills & Hotkeys -->
           <div class="rpg-card" style="padding:14px;background:rgba(22,27,34,0.9);">
             <div class="rpg-header" style="color:#bc8cff;font-size:16px;font-weight:bold;margin-bottom:8px;">⚡ 2. SKILLS & HOTKEYS</div>
             <ul style="padding-left:18px;font-size:13px;line-height:1.5;color:#e6edf3;">
@@ -63,7 +61,6 @@ export class GameMenuContainer {
             </ul>
           </div>
 
-          <!-- Card 3: Controls & Movement -->
           <div class="rpg-card" style="padding:14px;background:rgba(22,27,34,0.9);">
             <div class="rpg-header" style="color:#58a6ff;font-size:16px;font-weight:bold;margin-bottom:8px;">🎮 3. CONTROLS & MOVEMENT</div>
             <ul style="padding-left:18px;font-size:13px;line-height:1.5;color:#e6edf3;">
@@ -75,7 +72,6 @@ export class GameMenuContainer {
             </ul>
           </div>
 
-          <!-- Card 4: Progression & Saving -->
           <div class="rpg-card" style="padding:14px;background:rgba(22,27,34,0.9);">
             <div class="rpg-header" style="color:#3fb950;font-size:16px;font-weight:bold;margin-bottom:8px;">💾 4. PROGRESSION & SAVING</div>
             <ul style="padding-left:18px;font-size:13px;line-height:1.5;color:#e6edf3;">
@@ -87,10 +83,18 @@ export class GameMenuContainer {
           </div>
         </div>
 
-        <!-- Start Playing Button -->
         <div style="display:flex;justify-content:center;margin-top:16px;">
           <button id="btn-start-playing" class="rpg-btn" style="width:360px;padding:14px 24px;font-size:20px;font-weight:bold;cursor:pointer;border-radius:8px;background:linear-gradient(180deg, #2e7d32 0%, #1b5e20 100%);border-color:#4caf50;box-shadow:0 6px 20px rgba(0,0,0,0.8);">⚔️ START PLAYING NOW!</button>
         </div>
+      </div>
+
+      <!-- Top Center Quick Navigation RPG Bar -->
+      <div id="top-nav-bar" class="rpg-card" style="display:none;position:absolute;top:15px;left:50%;transform:translateX(-50%);padding:4px 8px;gap:6px;pointer-events:auto;z-index:15;border-color:#c9a050;">
+        <button class="nav-tab-btn rpg-btn" data-tab="inventory" style="padding:6px 12px;font-size:12px;font-weight:bold;cursor:pointer;border-radius:4px;">🎒 INV [I]</button>
+        <button class="nav-tab-btn rpg-btn" data-tab="skills" style="padding:6px 12px;font-size:12px;font-weight:bold;cursor:pointer;border-radius:4px;">⚡ SKILLS [K]</button>
+        <button class="nav-tab-btn rpg-btn" data-tab="quests" style="padding:6px 12px;font-size:12px;font-weight:bold;cursor:pointer;border-radius:4px;">📜 QUESTS [L]</button>
+        <button class="nav-tab-btn rpg-btn" data-tab="character" style="padding:6px 12px;font-size:12px;font-weight:bold;cursor:pointer;border-radius:4px;">👤 HERO [C]</button>
+        <button id="nav-btn-manual" class="rpg-btn" style="padding:6px 12px;font-size:12px;font-weight:bold;cursor:pointer;border-radius:4px;">📖 GUIDE [M]</button>
       </div>
 
       <!-- Right Panel: QuestTracker Positioned Safely on Right (top: 95px, right: 15px) below Gold Card -->
@@ -101,7 +105,6 @@ export class GameMenuContainer {
 
       <!-- Center Unified GameMenuContainer Modal -->
       <div id="menu-modal" class="rpg-card" style="display:none;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:720px;height:440px;pointer-events:auto;flex-direction:column;overflow:hidden;z-index:20;">
-        <!-- Tab Navigation Bar -->
         <div style="display:flex;background:#0f141e;border-bottom:2px solid #c9a050;">
           <button class="menu-tab-btn rpg-btn" data-tab="inventory" style="flex:1;padding:12px;font-weight:bold;cursor:pointer;">🎒 INVENTORY</button>
           <button class="menu-tab-btn rpg-btn" data-tab="skills" style="flex:1;padding:12px;font-weight:bold;cursor:pointer;">⚡ SKILLS</button>
@@ -112,7 +115,6 @@ export class GameMenuContainer {
           <button id="close-menu-btn" class="rpg-btn" style="padding:12px 18px;background:#da3633;border-color:#ff4d4d;color:#fff;font-weight:bold;cursor:pointer;">✕</button>
         </div>
 
-        <!-- View Content Area -->
         <div id="menu-tab-view" style="flex:1;padding:18px;overflow-y:auto;font-size:14px;"></div>
       </div>
 
@@ -123,13 +125,17 @@ export class GameMenuContainer {
     this.containerEl = document.getElementById('menu-modal');
     this.questTrackerEl = document.getElementById('quest-tracker');
     this.hotbarEl = document.getElementById('hotbar');
+    this.topNavEl = document.getElementById('top-nav-bar');
     this.mainMenuEl = document.getElementById('main-menu-gui');
     this.manualModalEl = document.getElementById('manual-card-modal');
 
-    document.querySelectorAll('.menu-tab-btn').forEach(btn => {
+    // Attach Tab Button Listeners
+    document.querySelectorAll('.menu-tab-btn, .nav-tab-btn').forEach(btn => {
       btn.addEventListener('click', (e) => {
-        const target = e.target as HTMLElement;
-        this.activeTab = target.dataset.tab || 'inventory';
+        const target = e.currentTarget as HTMLElement;
+        const tab = target.dataset.tab || 'inventory';
+        this.activeTab = tab;
+        if (this.containerEl) this.containerEl.style.display = 'flex';
         this.renderActiveTab(null);
       });
     });
@@ -144,6 +150,7 @@ export class GameMenuContainer {
     if (state === GameState.MAIN_MENU) {
       if (this.mainMenuEl) this.mainMenuEl.style.display = 'flex';
       if (this.manualModalEl) this.manualModalEl.style.display = 'none';
+      if (this.topNavEl) this.topNavEl.style.display = 'none';
       if (this.questTrackerEl) this.questTrackerEl.style.display = 'none';
       if (this.hotbarEl) this.hotbarEl.style.display = 'none';
 
@@ -165,6 +172,7 @@ export class GameMenuContainer {
     } else if (state === GameState.MANUAL) {
       if (this.mainMenuEl) this.mainMenuEl.style.display = 'none';
       if (this.manualModalEl) this.manualModalEl.style.display = 'flex';
+      if (this.topNavEl) this.topNavEl.style.display = 'none';
       if (this.questTrackerEl) this.questTrackerEl.style.display = 'none';
       if (this.hotbarEl) this.hotbarEl.style.display = 'none';
 
@@ -173,8 +181,12 @@ export class GameMenuContainer {
     } else {
       if (this.mainMenuEl) this.mainMenuEl.style.display = 'none';
       if (this.manualModalEl) this.manualModalEl.style.display = 'none';
+      if (this.topNavEl) this.topNavEl.style.display = 'flex';
       if (this.questTrackerEl) this.questTrackerEl.style.display = 'block';
       if (this.hotbarEl) this.hotbarEl.style.display = 'flex';
+
+      const navBtnMan = document.getElementById('nav-btn-manual');
+      if (navBtnMan) navBtnMan.onclick = () => { gsm.currentState = GameState.MANUAL; };
     }
   }
 
