@@ -34,8 +34,6 @@ export class Canvas2DRenderer {
         this.renderHUD(gsm);
 
         if (gsm.currentState === GameState.PAUSED) this.renderPauseMenu(gsm);
-        if (gsm.currentState === GameState.INVENTORY) this.renderInventoryUI(gsm);
-        if (gsm.currentState === GameState.QUESTS) this.renderQuestsUI(gsm);
         if (gsm.currentState === GameState.SHOP) this.renderShopUI(gsm);
         if (gsm.currentState === GameState.DIALOGUE) this.renderDialogueUI(gsm);
         break;
@@ -57,7 +55,6 @@ export class Canvas2DRenderer {
     ctx.fillStyle = '#0b0e14';
     ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
 
-    // Title
     ctx.fillStyle = '#58a6ff';
     ctx.font = 'bold 54px system-ui, sans-serif';
     ctx.textAlign = 'center';
@@ -67,7 +64,6 @@ export class Canvas2DRenderer {
     ctx.font = '20px system-ui, sans-serif';
     ctx.fillText('Enterprise 2D Action RPG Engine', this.canvas.width / 2, 230);
 
-    // Options
     ctx.fillStyle = '#3fb950';
     ctx.font = 'bold 24px system-ui, sans-serif';
     ctx.fillText('[ Press SPACE / ENTER or CLICK for NEW GAME ]', this.canvas.width / 2, 340);
@@ -103,7 +99,6 @@ export class Canvas2DRenderer {
     ctx.textAlign = 'left';
     ctx.font = '14px system-ui';
 
-    // Column 1: Story & Movement
     ctx.fillStyle = '#e3b341'; ctx.font = 'bold 16px system-ui';
     ctx.fillText('1. STORY & OBJECTIVE', 80, 130);
     ctx.fillStyle = '#e6edf3'; ctx.font = '13px system-ui';
@@ -122,7 +117,6 @@ export class Canvas2DRenderer {
     ctx.fillText('• Quest Log: L key', 80, 360);
     ctx.fillText('• Pause Game / Save Menu: ESC key or Click ⏸️ Button', 80, 380);
 
-    // Column 2: Combat & Skills
     ctx.fillStyle = '#e3b341'; ctx.font = 'bold 16px system-ui';
     ctx.fillText('3. SKILLS & HOTKEYS', 540, 130);
     ctx.fillStyle = '#e6edf3'; ctx.font = '13px system-ui';
@@ -140,7 +134,6 @@ export class Canvas2DRenderer {
     ctx.fillText('• Equip weapons & armor to boost stats instantly.', 540, 340);
     ctx.fillText('• Press ESC or click ⏸️ -> Click "Save Game" to persist progress.', 540, 360);
 
-    // Start Button Box
     ctx.fillStyle = '#3fb950'; ctx.font = 'bold 22px system-ui'; ctx.textAlign = 'center';
     ctx.fillText('[ Press SPACE / ENTER or CLICK HERE to START PLAYING! ]', this.canvas.width / 2, 475);
   }
@@ -157,8 +150,8 @@ export class Canvas2DRenderer {
     ctx.fillStyle = currentZone.color;
     ctx.fillRect(0, 0, currentZone.width, currentZone.height);
 
-    // Render Tile Grid
-    ctx.strokeStyle = 'rgba(255, 255, 255, 0.05)';
+    // Render Detailed Ground Grid
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.04)';
     ctx.lineWidth = 1;
     const tileSize = 64;
     for (let x = 0; x < currentZone.width; x += tileSize) {
@@ -167,6 +160,76 @@ export class Canvas2DRenderer {
     for (let y = 0; y < currentZone.height; y += tileSize) {
       ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(currentZone.width, y); ctx.stroke();
     }
+
+    // Render World Environmental Objects (Houses, Pathways, Trees, Lanterns, Fences, Crystals)
+    currentZone.decorations.forEach(deco => {
+      switch (deco.type) {
+        case 'PATH':
+          ctx.fillStyle = deco.color || '#2a3644';
+          ctx.fillRect(deco.x, deco.y, deco.w || 600, deco.h || 50);
+          break;
+
+        case 'HOUSE':
+          // House Body
+          ctx.fillStyle = deco.color || '#3d271d';
+          ctx.fillRect(deco.x, deco.y, deco.w || 120, deco.h || 100);
+          ctx.strokeStyle = '#5a3d2e'; ctx.lineWidth = 3; ctx.strokeRect(deco.x, deco.y, deco.w || 120, deco.h || 100);
+          // Roof
+          ctx.fillStyle = '#8b261d';
+          ctx.beginPath();
+          ctx.moveTo(deco.x - 10, deco.y);
+          ctx.lineTo(deco.x + (deco.w || 120) / 2, deco.y - 40);
+          ctx.lineTo(deco.x + (deco.w || 120) + 10, deco.y);
+          ctx.closePath(); ctx.fill();
+          // Label
+          if (deco.label) {
+            ctx.fillStyle = '#ffffff'; ctx.font = 'bold 12px system-ui'; ctx.textAlign = 'center';
+            ctx.fillText(deco.label, deco.x + (deco.w || 120) / 2, deco.y + (deco.h || 100) / 2);
+          }
+          break;
+
+        case 'TREE':
+          // Trunk
+          ctx.fillStyle = '#4a2e1b';
+          ctx.fillRect(deco.x - 8, deco.y - 15, 16, 30);
+          // Leaf Crown
+          ctx.fillStyle = deco.color || '#1e4620';
+          ctx.beginPath(); ctx.arc(deco.x, deco.y - 35, deco.w || 50, 0, Math.PI * 2); ctx.fill();
+          ctx.strokeStyle = '#122e14'; ctx.lineWidth = 2; ctx.stroke();
+          break;
+
+        case 'LANTERN':
+          // Pole
+          ctx.fillStyle = '#30363d'; ctx.fillRect(deco.x - 3, deco.y - 40, 6, 40);
+          // Lantern Glow Circle
+          ctx.fillStyle = 'rgba(227, 179, 65, 0.15)';
+          ctx.beginPath(); ctx.arc(deco.x, deco.y - 45, 50, 0, Math.PI * 2); ctx.fill();
+          // Lamp Light
+          ctx.fillStyle = deco.color || '#e3b341';
+          ctx.beginPath(); ctx.arc(deco.x, deco.y - 45, 8, 0, Math.PI * 2); ctx.fill();
+          break;
+
+        case 'FENCE':
+          ctx.fillStyle = deco.color || '#4a3525';
+          ctx.fillRect(deco.x, deco.y, deco.w || 400, deco.h || 10);
+          break;
+
+        case 'CRYSTAL':
+          ctx.fillStyle = deco.color || '#58a6ff';
+          ctx.beginPath();
+          ctx.moveTo(deco.x, deco.y - (deco.w || 30));
+          ctx.lineTo(deco.x + (deco.w || 30) / 2, deco.y);
+          ctx.lineTo(deco.x, deco.y + (deco.w || 30));
+          ctx.lineTo(deco.x - (deco.w || 30) / 2, deco.y);
+          ctx.closePath(); ctx.fill();
+          break;
+
+        case 'ROCK':
+          ctx.fillStyle = deco.color || '#38424b';
+          ctx.beginPath(); ctx.arc(deco.x, deco.y, deco.w || 30, 0, Math.PI * 2); ctx.fill();
+          break;
+      }
+    });
 
     // Render Zone Portal
     if (currentZone.portal) {
@@ -242,6 +305,7 @@ export class Canvas2DRenderer {
   private renderHUD(gsm: GameStateManager): void {
     const ctx = this.ctx;
     const player = gsm.player;
+    const currentZone = gsm.world.getCurrentZone();
 
     // Top-Left Player Stats HUD Card
     ctx.fillStyle = 'rgba(22, 27, 34, 0.85)';
@@ -274,6 +338,14 @@ export class Canvas2DRenderer {
     ctx.fillStyle = '#ffffff'; ctx.font = '10px system-ui';
     ctx.fillText(`XP: ${player.stats.xp} / ${player.stats.maxXp}`, 30, 89);
 
+    // Top-Center Quick Action Menu Bar
+    ctx.fillStyle = 'rgba(22, 27, 34, 0.85)';
+    ctx.fillRect(this.canvas.width / 2 - 180, 15, 360, 35);
+    ctx.strokeStyle = '#30363d'; ctx.strokeRect(this.canvas.width / 2 - 180, 15, 360, 35);
+
+    ctx.fillStyle = '#c9d1d9'; ctx.font = '12px system-ui'; ctx.textAlign = 'center';
+    ctx.fillText('🎒[I] Inv   ⚡[K] Skills   📜[L] Quests   👤[C] Hero   📖[M] Guide', this.canvas.width / 2, 37);
+
     // Gold & Zone Info (Top-Right)
     ctx.fillStyle = 'rgba(22, 27, 34, 0.85)';
     ctx.fillRect(this.canvas.width - 280, 15, 200, 70);
@@ -282,7 +354,7 @@ export class Canvas2DRenderer {
     ctx.fillStyle = '#e3b341'; ctx.font = 'bold 15px system-ui'; ctx.textAlign = 'right';
     ctx.fillText(`💰 Gold: ${player.stats.gold}`, this.canvas.width - 95, 38);
     ctx.fillStyle = '#bc8cff'; ctx.font = '13px system-ui';
-    ctx.fillText(`📍 ${gsm.world.getCurrentZone().name}`, this.canvas.width - 95, 62);
+    ctx.fillText(`📍 ${currentZone.name}`, this.canvas.width - 95, 62);
 
     // INTERACTIVE PAUSE BUTTON ⏸️ (Top-Right: x: 960-1010, y: 15-55)
     ctx.fillStyle = 'rgba(22, 27, 34, 0.9)';
@@ -294,37 +366,51 @@ export class Canvas2DRenderer {
     ctx.fillStyle = '#ffffff'; ctx.font = '22px system-ui'; ctx.textAlign = 'center';
     ctx.fillText('⏸️', 985, 43);
 
-    // Boss Health Bar Overlay (if Boss in zone)
-    const boss = gsm.world.getCurrentZone().enemies.find(e => e.isBoss && e.hp > 0);
-    if (boss) {
-      const bossHpRatio = Math.max(0, boss.hp / boss.maxHp);
-      ctx.fillStyle = 'rgba(22, 27, 34, 0.9)'; ctx.fillRect(this.canvas.width / 2 - 250, 15, 500, 45);
-      ctx.strokeStyle = '#da3633'; ctx.lineWidth = 2; ctx.strokeRect(this.canvas.width / 2 - 250, 15, 500, 45);
-      ctx.fillStyle = '#da3633'; ctx.fillRect(this.canvas.width / 2 - 240, 35, 480 * bossHpRatio, 18);
+    // MINIMAP RADAR OVERLAY (Bottom-Right: x: 880, y: 430, radius: 55)
+    const mapX = 950; const mapY = 490; const mapR = 55;
+    ctx.save();
+    ctx.beginPath(); ctx.arc(mapX, mapY, mapR, 0, Math.PI * 2); ctx.clip();
+    ctx.fillStyle = 'rgba(11, 14, 20, 0.9)'; ctx.fillRect(mapX - mapR, mapY - mapR, mapR * 2, mapR * 2);
 
-      ctx.fillStyle = '#ffffff'; ctx.font = 'bold 14px system-ui'; ctx.textAlign = 'center';
-      ctx.fillText(`${boss.name} - Phase ${boss.bossPhase}`, this.canvas.width / 2, 30);
-    }
+    // Minimap blips
+    const scaleX = (mapR * 1.6) / currentZone.width;
+    const scaleY = (mapR * 1.6) / currentZone.height;
 
-    // Bottom Skill Hotbar
-    const hotbarX = this.canvas.width / 2 - 175;
-    const hotbarY = this.canvas.height - 60;
-    player.skills.forEach((skill, idx) => {
-      const x = hotbarX + idx * 70;
-      ctx.fillStyle = 'rgba(22, 27, 34, 0.85)'; ctx.fillRect(x, hotbarY, 60, 50);
-      ctx.strokeStyle = skill.currentCooldown > 0 ? '#da3633' : '#30363d'; ctx.strokeRect(x, hotbarY, 60, 50);
+    // Player blip
+    ctx.fillStyle = '#58a6ff';
+    ctx.beginPath(); ctx.arc(mapX - mapR * 0.8 + player.stats.x * scaleX, mapY - mapR * 0.8 + player.stats.y * scaleY, 4, 0, Math.PI * 2); ctx.fill();
 
-      ctx.fillStyle = '#ffffff'; ctx.font = '20px system-ui'; ctx.textAlign = 'center';
-      ctx.fillText(skill.icon, x + 30, hotbarY + 28);
-      ctx.fillStyle = '#58a6ff'; ctx.font = 'bold 11px system-ui';
-      ctx.fillText(skill.key.toUpperCase(), x + 10, hotbarY + 14);
-
-      if (skill.currentCooldown > 0) {
-        ctx.fillStyle = 'rgba(0, 0, 0, 0.6)'; ctx.fillRect(x, hotbarY, 60, 50);
-        ctx.fillStyle = '#ffffff'; ctx.font = 'bold 14px system-ui';
-        ctx.fillText(skill.currentCooldown.toFixed(1) + 's', x + 30, hotbarY + 32);
+    // Enemies blips
+    currentZone.enemies.forEach(e => {
+      if (e.hp > 0) {
+        ctx.fillStyle = e.isBoss ? '#da3633' : '#f85149';
+        ctx.beginPath(); ctx.arc(mapX - mapR * 0.8 + e.x * scaleX, mapY - mapR * 0.8 + e.y * scaleY, e.isBoss ? 5 : 3, 0, Math.PI * 2); ctx.fill();
       }
     });
+
+    // NPCs blips
+    currentZone.npcs.forEach(n => {
+      ctx.fillStyle = '#3fb950';
+      ctx.beginPath(); ctx.arc(mapX - mapR * 0.8 + n.x * scaleX, mapY - mapR * 0.8 + n.y * scaleY, 3, 0, Math.PI * 2); ctx.fill();
+    });
+
+    ctx.restore();
+    ctx.strokeStyle = '#58a6ff'; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.arc(mapX, mapY, mapR, 0, Math.PI * 2); ctx.stroke();
+    ctx.fillStyle = '#ffffff'; ctx.font = 'bold 10px system-ui'; ctx.textAlign = 'center';
+    ctx.fillText('RADAR', mapX, mapY + mapR + 12);
+
+    // Boss Health Bar Overlay (if Boss in zone)
+    const boss = currentZone.enemies.find(e => e.isBoss && e.hp > 0);
+    if (boss) {
+      const bossHpRatio = Math.max(0, boss.hp / boss.maxHp);
+      ctx.fillStyle = 'rgba(22, 27, 34, 0.9)'; ctx.fillRect(this.canvas.width / 2 - 250, 60, 500, 45);
+      ctx.strokeStyle = '#da3633'; ctx.lineWidth = 2; ctx.strokeRect(this.canvas.width / 2 - 250, 60, 500, 45);
+      ctx.fillStyle = '#da3633'; ctx.fillRect(this.canvas.width / 2 - 240, 80, 480 * bossHpRatio, 18);
+
+      ctx.fillStyle = '#ffffff'; ctx.font = 'bold 14px system-ui'; ctx.textAlign = 'center';
+      ctx.fillText(`${boss.name} - Phase ${boss.bossPhase}`, this.canvas.width / 2, 75);
+    }
   }
 
   private renderPauseMenu(gsm: GameStateManager): void {
@@ -338,106 +424,25 @@ export class Canvas2DRenderer {
     const btnHeight = 45;
     const btnX = this.canvas.width / 2 - btnWidth / 2;
 
-    // 1. Resume Game Button
     ctx.fillStyle = '#21262d'; ctx.fillRect(btnX, 240, btnWidth, btnHeight);
     ctx.strokeStyle = '#58a6ff'; ctx.lineWidth = 2; ctx.strokeRect(btnX, 240, btnWidth, btnHeight);
     ctx.fillStyle = '#ffffff'; ctx.font = 'bold 18px system-ui';
     ctx.fillText('▶️ Resume Game (ESC)', this.canvas.width / 2, 268);
 
-    // 2. Save Game Button
     ctx.fillStyle = '#21262d'; ctx.fillRect(btnX, 300, btnWidth, btnHeight);
     ctx.strokeStyle = '#3fb950'; ctx.strokeRect(btnX, 300, btnWidth, btnHeight);
     ctx.fillStyle = '#3fb950';
     ctx.fillText('💾 Save Game (Press S)', this.canvas.width / 2, 328);
 
-    // 3. Manual / Instructions Button
     ctx.fillStyle = '#21262d'; ctx.fillRect(btnX, 360, btnWidth, btnHeight);
     ctx.strokeStyle = '#e3b341'; ctx.strokeRect(btnX, 360, btnWidth, btnHeight);
     ctx.fillStyle = '#e3b341';
     ctx.fillText('📖 Game Manual / Controls', this.canvas.width / 2, 388);
 
-    // 4. Main Menu Button
     ctx.fillStyle = '#21262d'; ctx.fillRect(btnX, 420, btnWidth, btnHeight);
     ctx.strokeStyle = '#da3633'; ctx.strokeRect(btnX, 420, btnWidth, btnHeight);
     ctx.fillStyle = '#f85149';
     ctx.fillText('🏠 Main Menu', this.canvas.width / 2, 448);
-  }
-
-  private renderInventoryUI(gsm: GameStateManager): void {
-    const ctx = this.ctx;
-    ctx.fillStyle = 'rgba(11, 14, 20, 0.9)'; ctx.fillRect(50, 50, this.canvas.width - 100, this.canvas.height - 100);
-    ctx.strokeStyle = '#30363d'; ctx.lineWidth = 2; ctx.strokeRect(50, 50, this.canvas.width - 100, this.canvas.height - 100);
-
-    ctx.fillStyle = '#58a6ff'; ctx.font = 'bold 28px system-ui'; ctx.textAlign = 'left';
-    ctx.fillText('INVENTORY & EQUIPMENT', 80, 95);
-
-    // Equipment Slots
-    ctx.fillStyle = '#e6edf3'; ctx.font = 'bold 18px system-ui';
-    ctx.fillText('Equipment:', 80, 145);
-
-    const eq = gsm.player.equipment;
-    ctx.font = '14px system-ui';
-    ctx.fillText(`Weapon: ${eq.weapon ? eq.weapon.name : 'None'}`, 80, 175);
-    ctx.fillText(`Armor: ${eq.armor ? eq.armor.name : 'None'}`, 80, 205);
-    ctx.fillText(`Accessory: ${eq.accessory ? eq.accessory.name : 'None'}`, 80, 235);
-
-    // Inventory 20-Slot Grid
-    ctx.fillText('Backpack Items:', 400, 145);
-    const startX = 400; const startY = 165;
-    gsm.player.inventory.forEach((item, idx) => {
-      const row = Math.floor(idx / 5);
-      const col = idx % 5;
-      const x = startX + col * 90;
-      const y = startY + row * 80;
-
-      ctx.fillStyle = 'rgba(22, 27, 34, 0.9)'; ctx.fillRect(x, y, 80, 70);
-      ctx.strokeStyle = item ? '#58a6ff' : '#30363d'; ctx.strokeRect(x, y, 80, 70);
-
-      if (item) {
-        ctx.fillStyle = '#ffffff'; ctx.font = '22px system-ui'; ctx.textAlign = 'center';
-        ctx.fillText(item.icon, x + 40, y + 35);
-        ctx.font = '11px system-ui';
-        ctx.fillText(item.name.substring(0, 10), x + 40, y + 55);
-      }
-    });
-
-    ctx.fillStyle = '#8b949e'; ctx.font = '14px system-ui'; ctx.textAlign = 'left';
-    ctx.fillText('Press I or ESC to close Inventory', 80, this.canvas.height - 80);
-  }
-
-  private renderQuestsUI(gsm: GameStateManager): void {
-    const ctx = this.ctx;
-    ctx.fillStyle = 'rgba(11, 14, 20, 0.9)'; ctx.fillRect(80, 60, this.canvas.width - 160, this.canvas.height - 120);
-    ctx.strokeStyle = '#30363d'; ctx.lineWidth = 2; ctx.strokeRect(80, 60, this.canvas.width - 160, this.canvas.height - 120);
-
-    ctx.fillStyle = '#3fb950'; ctx.font = 'bold 28px system-ui'; ctx.textAlign = 'left';
-    ctx.fillText('QUEST LOG', 110, 105);
-
-    gsm.questLog.quests.forEach((q, idx) => {
-      const y = 150 + idx * 110;
-      ctx.fillStyle = q.status === 'COMPLETED' ? '#3fb950' : (q.status === 'ACTIVE' ? '#58a6ff' : '#8b949e');
-      ctx.font = 'bold 18px system-ui';
-      ctx.fillText(`[${q.status}] ${q.title}`, 110, y);
-
-      ctx.fillStyle = '#e6edf3'; ctx.font = '14px system-ui';
-      ctx.fillText(q.description, 110, y + 25);
-
-      q.objectives.forEach(obj => {
-        ctx.fillStyle = obj.completed ? '#3fb950' : '#e3b341';
-        ctx.fillText(`  • ${obj.description}: ${obj.currentAmount}/${obj.requiredAmount}`, 110, y + 48);
-      });
-
-      if (q.status === 'COMPLETED') {
-        ctx.fillStyle = '#3fb950'; ctx.font = 'bold 14px system-ui';
-        ctx.fillText(`Press [ 1 ] to Claim Reward (+${q.rewardXp} XP, +${q.rewardGold} Gold)`, 110, y + 70);
-        if (gsm.input.isKeyJustPressed('1')) {
-          gsm.questLog.claimReward(q.id, gsm.player);
-        }
-      }
-    });
-
-    ctx.fillStyle = '#8b949e'; ctx.font = '14px system-ui';
-    ctx.fillText('Press L or ESC to close Quest Log', 110, this.canvas.height - 90);
   }
 
   private renderShopUI(gsm: GameStateManager): void {
