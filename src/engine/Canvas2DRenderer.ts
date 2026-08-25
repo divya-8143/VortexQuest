@@ -72,56 +72,10 @@ export class Canvas2DRenderer {
   }
 
   private renderManualScreen(gsm: GameStateManager): void {
+    // Fill dark background, back text view removed per user request (handled by HTML card modal)
     const ctx = this.ctx;
     ctx.fillStyle = '#05070a';
     ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
-
-    ctx.fillStyle = 'rgba(15, 20, 30, 0.95)';
-    ctx.fillRect(50, 40, this.canvas.width - 100, this.canvas.height - 80);
-    ctx.strokeStyle = '#ffd700';
-    ctx.lineWidth = 2;
-    ctx.strokeRect(50, 40, this.canvas.width - 100, this.canvas.height - 80);
-
-    ctx.fillStyle = '#ffd700'; ctx.font = 'bold 30px Cinzel, serif'; ctx.textAlign = 'center';
-    ctx.fillText('📖 VORTEX QUEST - GAME MANUAL & INSTRUCTIONS', this.canvas.width / 2, 85);
-
-    ctx.textAlign = 'left';
-    ctx.font = '15px Rajdhani, sans-serif';
-
-    ctx.fillStyle = '#e3b341'; ctx.font = 'bold 18px Cinzel, serif';
-    ctx.fillText('1. STORY & OBJECTIVE', 80, 130);
-    ctx.fillStyle = '#e6edf3'; ctx.font = '14px Rajdhani, sans-serif';
-    ctx.fillText('• You are the Vortex Hero tasked with saving the realm of Aetheria.', 80, 155);
-    ctx.fillText('• Explore 5 connected zones: Peaceful Village -> Green Forest ->', 80, 175);
-    ctx.fillText('  Dark Forest -> Crystal Cave -> Final Dungeon.', 80, 195);
-    ctx.fillText('• Defeat the Vortex Guardian Boss to claim ultimate victory!', 80, 215);
-
-    ctx.fillStyle = '#e3b341'; ctx.font = 'bold 18px Cinzel, serif';
-    ctx.fillText('2. CONTROLS & MOVEMENT', 80, 255);
-    ctx.fillStyle = '#e6edf3'; ctx.font = '14px Rajdhani, sans-serif';
-    ctx.fillText('• Movement: WASD or Arrow Keys', 80, 280);
-    ctx.fillText('• Basic Attack: Spacebar', 80, 300);
-    ctx.fillText('• Talk / Shop Interaction: E key (near NPCs & Merchants)', 80, 320);
-    ctx.fillText('• Inventory Window: I key', 80, 340);
-    ctx.fillText('• Quest Log: L key', 80, 360);
-    ctx.fillText('• Pause Game / Save Menu: ESC key or Click ⏸️ Button', 80, 380);
-
-    ctx.fillStyle = '#e3b341'; ctx.font = 'bold 18px Cinzel, serif';
-    ctx.fillText('3. SKILLS & HOTKEYS', 540, 130);
-    ctx.fillStyle = '#e6edf3'; ctx.font = '14px Rajdhani, sans-serif';
-    ctx.fillText('• 1 Key: Fire Slash (200% weapon damage)', 540, 155);
-    ctx.fillText('• 2 Key: Vortex Dash (Forward evade dash)', 540, 175);
-    ctx.fillText('• 3 Key: Lightning Storm (250% AOE strike)', 540, 195);
-    ctx.fillText('• 4 Key: Divine Heal (Restores 40% Max HP)', 540, 215);
-    ctx.fillText('• Q Key: Vortex Annihilation (400% Ultimate)', 540, 235);
-
-    ctx.fillStyle = '#e3b341'; ctx.font = 'bold 18px Cinzel, serif';
-    ctx.fillText('4. PROGRESSION & SAVING', 540, 275);
-    ctx.fillStyle = '#e6edf3'; ctx.font = '14px Rajdhani, sans-serif';
-    ctx.fillText('• Defeating enemies grants XP, Gold, and rare Loot drops.', 540, 300);
-    ctx.fillText('• Leveling up increases Max HP, Mana, Attack, and Defense.', 540, 320);
-    ctx.fillText('• Equip weapons & armor to boost stats instantly.', 540, 340);
-    ctx.fillText('• Press ESC or click ⏸️ -> Click "Save Game" to persist progress.', 540, 360);
   }
 
   private renderWorldAndGameplay(gsm: GameStateManager): void {
