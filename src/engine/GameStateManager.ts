@@ -6,6 +6,7 @@ import { QuestLog } from '../gameplay/QuestLog';
 import { InputManager } from './InputManager';
 import { Camera2D } from './Camera2D';
 import { SaveSystem } from '../utils/SaveSystem';
+import { GameMenuContainer } from '../ui/GameMenuContainer';
 
 export interface FloatingText {
   text: string;
@@ -33,6 +34,7 @@ export class GameStateManager {
   public questLog: QuestLog;
   public input: InputManager;
   public camera: Camera2D;
+  public menuContainer: GameMenuContainer;
   public floatingTexts: FloatingText[] = [];
   public projectiles: Projectile[] = [];
   public activeNPC: NPCData | null = null;
@@ -44,6 +46,7 @@ export class GameStateManager {
     this.questLog = new QuestLog();
     this.input = new InputManager();
     this.camera = new Camera2D(1024, 576);
+    this.menuContainer = new GameMenuContainer();
   }
 
   public setCanvas(canvas: HTMLCanvasElement): void {
@@ -72,7 +75,6 @@ export class GameStateManager {
         break;
 
       case GameState.PLAYING:
-        // Check Pause Button Click (Top-Right ⏸️ Button at x: 970-1010, y: 15-55)
         if (mouseClicked && mousePos.x >= 960 && mousePos.x <= 1010 && mousePos.y >= 15 && mousePos.y <= 55) {
           this.currentState = GameState.PAUSED;
           return;
@@ -88,12 +90,11 @@ export class GameStateManager {
         } else if (this.input.isKeyJustPressed('m')) {
           this.currentState = GameState.MANUAL;
         } else if (mouseClicked) {
-          // Pause menu button clicks
           if (mousePos.x >= 362 && mousePos.x <= 662) {
-            if (mousePos.y >= 240 && mousePos.y <= 285) this.currentState = GameState.PLAYING; // Resume
-            else if (mousePos.y >= 300 && mousePos.y <= 345) this.saveCurrentGame(); // Save
-            else if (mousePos.y >= 360 && mousePos.y <= 405) this.currentState = GameState.MANUAL; // Manual
-            else if (mousePos.y >= 420 && mousePos.y <= 465) this.currentState = GameState.MAIN_MENU; // Main Menu
+            if (mousePos.y >= 240 && mousePos.y <= 285) this.currentState = GameState.PLAYING;
+            else if (mousePos.y >= 300 && mousePos.y <= 345) this.saveCurrentGame();
+            else if (mousePos.y >= 360 && mousePos.y <= 405) this.currentState = GameState.MANUAL;
+            else if (mousePos.y >= 420 && mousePos.y <= 465) this.currentState = GameState.MAIN_MENU;
           }
         }
         break;
@@ -133,8 +134,8 @@ export class GameStateManager {
     this.questLog = new QuestLog();
     this.projectiles = [];
     this.floatingTexts = [];
-    this.currentState = GameState.MANUAL; // Show manual first on starting game!
-    console.log('[GameStateManager] New game started - Showing manual.');
+    this.currentState = GameState.MANUAL;
+    this.menuContainer.addLog('[System] New Game started! Read the Game Manual to begin.');
   }
 
   public continueGame(): void {
@@ -148,7 +149,7 @@ export class GameStateManager {
       if (saveData.currentZone) this.world.switchZone(saveData.currentZone);
 
       this.currentState = GameState.PLAYING;
-      console.log('[GameStateManager] Continued game from save data!');
+      this.menuContainer.addLog('[System] Save data loaded successfully.');
     } else {
       this.startNewGame();
     }
@@ -167,22 +168,32 @@ export class GameStateManager {
       bossDefeated: false
     });
     this.addFloatingText('Game Saved!', this.player.stats.x, this.player.stats.y - 30, '#3fb950');
+    this.menuContainer.addLog('[SaveSystem] Progress saved to LocalStorage.');
   }
 
   private updatePlayingState(deltaTime: number): void {
-    // Menu toggles
     if (this.input.isKeyJustPressed('escape') || this.input.isKeyJustPressed('p')) {
       this.currentState = GameState.PAUSED;
       return;
     }
+
+    // Toggle Unified Menu Tabs
     if (this.input.isKeyJustPressed('i')) {
-      this.currentState = GameState.INVENTORY;
-      return;
+      this.menuContainer.toggleTab('inventory', this);
     }
     if (this.input.isKeyJustPressed('l')) {
-      this.currentState = GameState.QUESTS;
-      return;
+      this.menuContainer.toggleTab('quests', this);
     }
+    if (this.input.isKeyJustPressed('k')) {
+      this.menuContainer.toggleTab('skills', this);
+    }
+    if (this.input.isKeyJustPressed('c')) {
+      this.menuContainer.toggleTab('character', this);
+    }
+
+    // Update UI Overlays
+    this.menuContainer.updateQuestTracker(this);
+    this.menuContainer.updateHotbar(this);
 
     // Player update & movement
     this.player.update(deltaTime);
@@ -200,33 +211,27 @@ export class GameStateManager {
       this.player.stats.y += (moveY / len) * this.player.stats.speed * deltaTime;
     }
 
-    // Keep player in zone bounds
     const currentZone = this.world.getCurrentZone();
     this.player.stats.x = Math.max(this.player.stats.radius, Math.min(currentZone.width - this.player.stats.radius, this.player.stats.x));
     this.player.stats.y = Math.max(this.player.stats.radius, Math.min(currentZone.height - this.player.stats.radius, this.player.stats.y));
 
-    // Update Camera
     this.camera.follow(this.player.stats.x, this.player.stats.y, currentZone.width, currentZone.height, deltaTime);
 
-    // Player Attack Input (Spacebar)
     if (this.input.isKeyJustPressed(' ') && this.player.attackCooldown <= 0) {
       this.executePlayerAttack(1.0, 60);
       this.player.attackCooldown = 0.4;
     }
 
-    // Skill Hotkeys (1, 2, 3, 4, Q)
     ['1', '2', '3', '4', 'q'].forEach(key => {
       if (this.input.isKeyJustPressed(key)) {
         this.executePlayerSkill(key);
       }
     });
 
-    // NPC Interaction Check (E Key)
     if (this.input.isKeyJustPressed('e')) {
       this.checkNPCInteraction();
     }
 
-    // Portal Zone Transition Check
     if (currentZone.portal) {
       const p = currentZone.portal;
       const dist = Math.sqrt((this.player.stats.x - p.x) ** 2 + (this.player.stats.y - p.y) ** 2);
@@ -235,13 +240,12 @@ export class GameStateManager {
         this.player.stats.x = p.targetX;
         this.player.stats.y = p.targetY;
         this.addFloatingText(`Entered ${this.world.getCurrentZone().name}`, this.player.stats.x, this.player.stats.y - 40, '#58a6ff');
+        this.menuContainer.addLog(`[Zone] Entered ${this.world.getCurrentZone().name}`);
       }
     }
 
-    // Update Projectiles
     this.updateProjectiles(deltaTime);
 
-    // Update Enemies & Enemy AI
     currentZone.enemies.forEach(enemy => {
       if (enemy.hp > 0) {
         const { attackTriggered, isRanged } = enemy.updateAI(this.player.stats.x, this.player.stats.y, deltaTime);
@@ -266,34 +270,38 @@ export class GameStateManager {
 
             if (this.player.isDead()) {
               this.currentState = GameState.GAME_OVER;
+              this.menuContainer.addLog('[Combat] Player was defeated in battle.');
             }
           }
         }
       }
     });
 
-    // Remove dead enemies & award XP/Loot
     for (let i = currentZone.enemies.length - 1; i >= 0; i--) {
       const enemy = currentZone.enemies[i];
       if (enemy.hp <= 0) {
         const leveledUp = this.player.addXp(enemy.xpReward);
         this.player.stats.gold += enemy.goldReward;
         this.addFloatingText(`+${enemy.xpReward} XP  +${enemy.goldReward} Gold`, enemy.x, enemy.y, '#e3b341');
+        this.menuContainer.addLog(`[Combat] Defeated ${enemy.name}! (+${enemy.xpReward} XP, +${enemy.goldReward} Gold)`);
 
         if (leveledUp) {
           this.addFloatingText(`LEVEL UP! (Lvl ${this.player.stats.level})`, this.player.stats.x, this.player.stats.y - 45, '#3fb950');
+          this.menuContainer.addLog(`[Level Up] Reached Level ${this.player.stats.level}! Attributes increased.`);
         }
 
         const itemDrop = enemy.generateLoot();
         if (itemDrop) {
           this.addItemToInventory(itemDrop);
           this.addFloatingText(`Looted: ${itemDrop.name}`, enemy.x, enemy.y - 20, '#bc8cff');
+          this.menuContainer.addLog(`[Loot] Obtained ${itemDrop.name}`);
         }
 
         this.questLog.notifyKill(enemy.type);
 
         if (enemy.isBoss) {
           this.currentState = GameState.VICTORY;
+          this.menuContainer.addLog('[Victory] Defeated the Vortex Guardian Boss!');
         }
 
         currentZone.enemies.splice(i, 1);
@@ -358,9 +366,11 @@ export class GameStateManager {
       const healAmount = Math.floor(this.player.stats.maxHp * 0.40);
       this.player.stats.hp = Math.min(this.player.stats.maxHp, this.player.stats.hp + healAmount);
       this.addFloatingText(`+${healAmount} HP Healed!`, this.player.stats.x, this.player.stats.y - 30, '#3fb950');
+      this.menuContainer.addLog(`[Skill] Cast Divine Heal (+${healAmount} HP)`);
     } else {
       this.executePlayerAttack(skill.damageMultiplier, skill.range);
       this.addFloatingText(`Cast ${skill.name}!`, this.player.stats.x, this.player.stats.y - 30, '#bc8cff');
+      this.menuContainer.addLog(`[Skill] Cast ${skill.name}`);
     }
   }
 
@@ -371,7 +381,7 @@ export class GameStateManager {
       if (dist < 60) {
         this.activeNPC = npc;
         if (npc.role === 'MERCHANT') {
-          this.currentState = GameState.SHOP;
+          this.menuContainer.toggleTab('shop', this);
         } else {
           this.currentState = GameState.DIALOGUE;
         }
