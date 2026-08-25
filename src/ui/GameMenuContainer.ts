@@ -97,8 +97,8 @@ export class GameMenuContainer {
         <button id="nav-btn-manual" class="rpg-btn" style="padding:6px 12px;font-size:12px;font-weight:bold;cursor:pointer;border-radius:4px;">📖 GUIDE [M]</button>
       </div>
 
-      <!-- Right Panel: QuestTracker Positioned Safely on Right (top: 95px, right: 15px) below Gold Card -->
-      <div id="quest-tracker" class="rpg-card" style="display:none;position:absolute;top:95px;right:15px;width:220px;padding:10px;font-size:12px;pointer-events:auto;">
+      <!-- Right Panel: QuestTracker Positioned Safely on Right (top: 95px, right: 15px) with Quest Progress Bar -->
+      <div id="quest-tracker" class="rpg-card" style="display:none;position:absolute;top:95px;right:15px;width:230px;padding:10px;font-size:12px;pointer-events:auto;">
         <div class="rpg-header" style="color:#ffd700;font-weight:bold;margin-bottom:6px;font-size:14px;">🎯 ACTIVE QUESTS</div>
         <div id="quest-tracker-content"></div>
       </div>
@@ -118,7 +118,7 @@ export class GameMenuContainer {
         <div id="menu-tab-view" style="flex:1;padding:18px;overflow-y:auto;font-size:14px;"></div>
       </div>
 
-      <!-- Bottom Bar: Skills Hotbar Pinned Exactly at Page Bottom (bottom: 20px, left: 50%) -->
+      <!-- Bottom Bar: Skills Hotbar Pinned Exactly at Page Bottom with Textured Inset Slots -->
       <div id="hotbar" style="display:none;position:absolute;bottom:20px;left:50%;transform:translateX(-50%);justify-content:center;gap:12px;pointer-events:auto;z-index:10;"></div>
     `;
 
@@ -129,7 +129,6 @@ export class GameMenuContainer {
     this.mainMenuEl = document.getElementById('main-menu-gui');
     this.manualModalEl = document.getElementById('manual-card-modal');
 
-    // Attach Tab Button Listeners
     document.querySelectorAll('.menu-tab-btn, .nav-tab-btn').forEach(btn => {
       btn.addEventListener('click', (e) => {
         const target = e.currentTarget as HTMLElement;
@@ -213,7 +212,19 @@ export class GameMenuContainer {
       html += `<div style="margin-bottom:8px;"><strong style="color:#ffd700;font-family:Cinzel,serif;">${q.title}</strong>`;
       q.objectives.forEach(obj => {
         const checked = obj.completed ? 'checked' : '';
-        html += `<div style="margin-top:4px;"><input type="checkbox" ${checked} disabled /> <span style="${obj.completed ? 'text-decoration:line-through;color:#3fb950;' : 'color:#e6edf3;'}">${obj.description} (${obj.currentAmount}/${obj.requiredAmount})</span></div>`;
+        const pct = Math.min(100, Math.floor((obj.currentAmount / obj.requiredAmount) * 100));
+        html += `
+          <div style="margin-top:4px;">
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:4px;">
+              <span style="${obj.completed ? 'text-decoration:line-through;color:#3fb950;' : 'color:#e6edf3;'}">${obj.description}</span>
+              <span style="color:#ffd700;font-weight:bold;">${obj.currentAmount}/${obj.requiredAmount}</span>
+            </div>
+            <!-- Quest Progress Bar -->
+            <div style="width:100%;height:6px;background:#161e2b;border-radius:3px;margin-top:3px;overflow:hidden;border:1px solid #30363d;">
+              <div style="width:${pct}%;height:100%;background:${obj.completed ? '#3fb950' : 'linear-gradient(90deg, #58a6ff, #3fb950)'};"></div>
+            </div>
+          </div>
+        `;
       });
       html += `</div>`;
     });
@@ -225,9 +236,11 @@ export class GameMenuContainer {
     let html = '';
     gsm.player.skills.forEach(skill => {
       const cd = skill.currentCooldown > 0 ? `${skill.currentCooldown.toFixed(1)}s` : skill.key.toUpperCase();
-      const style = skill.currentCooldown > 0 ? 'background:rgba(20,25,35,0.9);border:2px solid #da3633;color:#8b949e;' : 'background:linear-gradient(180deg, #2a3547 0%, #161e2b 100%);border:2px solid #c9a050;color:#fff;';
+      const style = skill.currentCooldown > 0
+        ? 'background:rgba(15,20,30,0.95);border:2px solid #da3633;color:#8b949e;box-shadow:inset 0 0 10px rgba(0,0,0,0.9);'
+        : 'background:linear-gradient(180deg, #2a3547 0%, #161e2b 100%);border:2px solid #c9a050;color:#fff;box-shadow:inset 0 0 8px rgba(255,215,0,0.2), 0 4px 15px rgba(0,0,0,0.8);';
       html += `
-        <button class="hotbar-btn" data-key="${skill.key}" style="${style}width:60px;height:54px;border-radius:8px;font-size:22px;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;box-shadow:0 4px 15px rgba(0,0,0,0.8);">
+        <button class="hotbar-btn" data-key="${skill.key}" style="${style}width:62px;height:56px;border-radius:8px;font-size:22px;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;">
           <span>${skill.icon}</span>
           <span style="font-size:11px;font-family:Cinzel,serif;font-weight:bold;margin-top:2px;color:#ffd700;">${cd}</span>
         </button>
@@ -271,7 +284,7 @@ export class GameMenuContainer {
           <div class="rpg-header" style="font-weight:bold;color:#ffd700;font-size:18px;margin-bottom:14px;">🎒 HERO INVENTORY & BACKPACK</div>
           <div style="display:grid;grid-template-columns:repeat(5, 1fr);gap:10px;">
             ${gsm ? gsm.player.inventory.map((item, i) => `
-              <div style="background:#161e2b;border:1.5px solid ${item ? '#c9a050' : '#30363d'};border-radius:6px;height:70px;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;" title="${item ? item.description : 'Empty Slot'}">
+              <div style="background:#161e2b;border:1.5px solid ${item ? '#c9a050' : '#30363d'};border-radius:6px;height:70px;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;box-shadow:inset 0 0 8px rgba(0,0,0,0.8);" title="${item ? item.description : 'Empty Slot'}">
                 <span style="font-size:24px;">${item ? item.icon : ''}</span>
                 <span style="font-size:11px;color:#c9d1d9;">${item ? item.name.substring(0, 10) : 'Empty'}</span>
               </div>
