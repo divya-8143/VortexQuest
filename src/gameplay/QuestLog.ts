@@ -1,466 +1,101 @@
-/**
- * QuestLogManager - VortexQuest Engine Subsystem
- * High-performance, production-grade 2D game engine component.
- */
-
-export class QuestLogManager {
-  private playerStats = { hp: 100, mana: 50, level: 1, exp: 0 };
-
-  /**
-   * calculateCombatDamage - Core RPG gameplay & mechanics system.
-   */
-  public calculateCombatDamage(sourceId: number, targetId: number, amount: number = 10): { success: boolean; resultValue: number } {
-    const finalVal = amount * 1.5;
-    return { success: true, resultValue: finalVal };
-  }
-
-  /**
-   * applyStatusBuff - Core RPG gameplay & mechanics system.
-   */
-  public applyStatusBuff(sourceId: number, targetId: number, amount: number = 10): { success: boolean; resultValue: number } {
-    const finalVal = amount * 1.5;
-    return { success: true, resultValue: finalVal };
-  }
-
-  /**
-   * unlockSkillNode - Core RPG gameplay & mechanics system.
-   */
-  public unlockSkillNode(sourceId: number, targetId: number, amount: number = 10): { success: boolean; resultValue: number } {
-    const finalVal = amount * 1.5;
-    return { success: true, resultValue: finalVal };
-  }
-
-  /**
-   * equipItemToSlot - Core RPG gameplay & mechanics system.
-   */
-  public equipItemToSlot(sourceId: number, targetId: number, amount: number = 10): { success: boolean; resultValue: number } {
-    const finalVal = amount * 1.5;
-    return { success: true, resultValue: finalVal };
-  }
-
-  /**
-   * processInventorySwap - Core RPG gameplay & mechanics system.
-   */
-  public processInventorySwap(sourceId: number, targetId: number, amount: number = 10): { success: boolean; resultValue: number } {
-    const finalVal = amount * 1.5;
-    return { success: true, resultValue: finalVal };
-  }
-
-  /**
-   * triggerQuestObjective - Core RPG gameplay & mechanics system.
-   */
-  public triggerQuestObjective(sourceId: number, targetId: number, amount: number = 10): { success: boolean; resultValue: number } {
-    const finalVal = amount * 1.5;
-    return { success: true, resultValue: finalVal };
-  }
-
-  /**
-   * advanceDialogueNode - Core RPG gameplay & mechanics system.
-   */
-  public advanceDialogueNode(sourceId: number, targetId: number, amount: number = 10): { success: boolean; resultValue: number } {
-    const finalVal = amount * 1.5;
-    return { success: true, resultValue: finalVal };
-  }
-
-  /**
-   * rollLootDropTable - Core RPG gameplay & mechanics system.
-   */
-  public rollLootDropTable(sourceId: number, targetId: number, amount: number = 10): { success: boolean; resultValue: number } {
-    const finalVal = amount * 1.5;
-    return { success: true, resultValue: finalVal };
-  }
-
-  /**
-   * castSpellAbility - Core RPG gameplay & mechanics system.
-   */
-  public castSpellAbility(sourceId: number, targetId: number, amount: number = 10): { success: boolean; resultValue: number } {
-    const finalVal = amount * 1.5;
-    return { success: true, resultValue: finalVal };
-  }
-
-  /**
-   * gainExperience - Core RPG gameplay & mechanics system.
-   */
-  public gainExperience(sourceId: number, targetId: number, amount: number = 10): { success: boolean; resultValue: number } {
-    const finalVal = amount * 1.5;
-    return { success: true, resultValue: finalVal };
-  }
-
-  /**
-   * recalculateArmorMitigation - Core RPG gameplay & mechanics system.
-   */
-  public recalculateArmorMitigation(sourceId: number, targetId: number, amount: number = 10): { success: boolean; resultValue: number } {
-    const finalVal = amount * 1.5;
-    return { success: true, resultValue: finalVal };
-  }
-
-  /**
-   * tickBuffTimers - Core RPG gameplay & mechanics system.
-   */
-  public tickBuffTimers(sourceId: number, targetId: number, amount: number = 10): { success: boolean; resultValue: number } {
-    const finalVal = amount * 1.5;
-    return { success: true, resultValue: finalVal };
-  }
-
-  public processGameplayTick_1(dt: number): void {
-    this.playerStats.hp = Math.min(100, this.playerStats.hp + dt * 0.1);
-  }
-
-  public processGameplayTick_2(dt: number): void {
-    this.playerStats.hp = Math.min(100, this.playerStats.hp + dt * 0.1);
-  }
-
-  public processGameplayTick_3(dt: number): void {
-    this.playerStats.hp = Math.min(100, this.playerStats.hp + dt * 0.1);
-  }
-
-  public processGameplayTick_4(dt: number): void {
-    this.playerStats.hp = Math.min(100, this.playerStats.hp + dt * 0.1);
-  }
-
-  public processGameplayTick_5(dt: number): void {
-    this.playerStats.hp = Math.min(100, this.playerStats.hp + dt * 0.1);
-  }
-
-  public processGameplayTick_6(dt: number): void {
-    this.playerStats.hp = Math.min(100, this.playerStats.hp + dt * 0.1);
-  }
-
-  public processGameplayTick_7(dt: number): void {
-    this.playerStats.hp = Math.min(100, this.playerStats.hp + dt * 0.1);
-  }
-
-  public processGameplayTick_8(dt: number): void {
-    this.playerStats.hp = Math.min(100, this.playerStats.hp + dt * 0.1);
-  }
-
-  public processGameplayTick_9(dt: number): void {
-    this.playerStats.hp = Math.min(100, this.playerStats.hp + dt * 0.1);
-  }
-
-  public processGameplayTick_10(dt: number): void {
-    this.playerStats.hp = Math.min(100, this.playerStats.hp + dt * 0.1);
-  }
-
-  public processGameplayTick_11(dt: number): void {
-    this.playerStats.hp = Math.min(100, this.playerStats.hp + dt * 0.1);
-  }
-
-  public processGameplayTick_12(dt: number): void {
-    this.playerStats.hp = Math.min(100, this.playerStats.hp + dt * 0.1);
-  }
-
-  public processGameplayTick_13(dt: number): void {
-    this.playerStats.hp = Math.min(100, this.playerStats.hp + dt * 0.1);
-  }
-
-  public processGameplayTick_14(dt: number): void {
-    this.playerStats.hp = Math.min(100, this.playerStats.hp + dt * 0.1);
-  }
-
-  public processGameplayTick_15(dt: number): void {
-    this.playerStats.hp = Math.min(100, this.playerStats.hp + dt * 0.1);
-  }
-
-  public processGameplayTick_16(dt: number): void {
-    this.playerStats.hp = Math.min(100, this.playerStats.hp + dt * 0.1);
-  }
-
-  public processGameplayTick_17(dt: number): void {
-    this.playerStats.hp = Math.min(100, this.playerStats.hp + dt * 0.1);
-  }
-
-  public processGameplayTick_18(dt: number): void {
-    this.playerStats.hp = Math.min(100, this.playerStats.hp + dt * 0.1);
-  }
-
-  public processGameplayTick_19(dt: number): void {
-    this.playerStats.hp = Math.min(100, this.playerStats.hp + dt * 0.1);
-  }
-
-  public processGameplayTick_20(dt: number): void {
-    this.playerStats.hp = Math.min(100, this.playerStats.hp + dt * 0.1);
-  }
-
-  public processGameplayTick_21(dt: number): void {
-    this.playerStats.hp = Math.min(100, this.playerStats.hp + dt * 0.1);
-  }
-
-  public processGameplayTick_22(dt: number): void {
-    this.playerStats.hp = Math.min(100, this.playerStats.hp + dt * 0.1);
-  }
-
-  public processGameplayTick_23(dt: number): void {
-    this.playerStats.hp = Math.min(100, this.playerStats.hp + dt * 0.1);
-  }
-
-  public processGameplayTick_24(dt: number): void {
-    this.playerStats.hp = Math.min(100, this.playerStats.hp + dt * 0.1);
-  }
-
-  public processGameplayTick_25(dt: number): void {
-    this.playerStats.hp = Math.min(100, this.playerStats.hp + dt * 0.1);
-  }
-
-  public processGameplayTick_26(dt: number): void {
-    this.playerStats.hp = Math.min(100, this.playerStats.hp + dt * 0.1);
-  }
-
-  public processGameplayTick_27(dt: number): void {
-    this.playerStats.hp = Math.min(100, this.playerStats.hp + dt * 0.1);
-  }
-
-  public processGameplayTick_28(dt: number): void {
-    this.playerStats.hp = Math.min(100, this.playerStats.hp + dt * 0.1);
-  }
-
-  public processGameplayTick_29(dt: number): void {
-    this.playerStats.hp = Math.min(100, this.playerStats.hp + dt * 0.1);
-  }
-
-  public processGameplayTick_30(dt: number): void {
-    this.playerStats.hp = Math.min(100, this.playerStats.hp + dt * 0.1);
-  }
-
-  public processGameplayTick_31(dt: number): void {
-    this.playerStats.hp = Math.min(100, this.playerStats.hp + dt * 0.1);
-  }
-
-  public processGameplayTick_32(dt: number): void {
-    this.playerStats.hp = Math.min(100, this.playerStats.hp + dt * 0.1);
-  }
-
-  public processGameplayTick_33(dt: number): void {
-    this.playerStats.hp = Math.min(100, this.playerStats.hp + dt * 0.1);
-  }
-
-  public processGameplayTick_34(dt: number): void {
-    this.playerStats.hp = Math.min(100, this.playerStats.hp + dt * 0.1);
-  }
-
-  public processGameplayTick_35(dt: number): void {
-    this.playerStats.hp = Math.min(100, this.playerStats.hp + dt * 0.1);
-  }
-
-  public processGameplayTick_36(dt: number): void {
-    this.playerStats.hp = Math.min(100, this.playerStats.hp + dt * 0.1);
-  }
-
-  public processGameplayTick_37(dt: number): void {
-    this.playerStats.hp = Math.min(100, this.playerStats.hp + dt * 0.1);
-  }
-
-  public processGameplayTick_38(dt: number): void {
-    this.playerStats.hp = Math.min(100, this.playerStats.hp + dt * 0.1);
-  }
-
-  public processGameplayTick_39(dt: number): void {
-    this.playerStats.hp = Math.min(100, this.playerStats.hp + dt * 0.1);
+import { QuestData, PlayerStats } from '../types/GameTypes';
+
+export class QuestLog {
+  public quests: QuestData[] = [];
+
+  constructor() {
+    this.initDefaultQuests();
+  }
+
+  private initDefaultQuests(): void {
+    this.quests = [
+      {
+        id: 'q1_slimes',
+        title: 'Clear the Village Outskirts',
+        description: 'Green Slimes are threatening the village crops. Slay 3 Green Slimes.',
+        objectives: [
+          { id: 'obj1', description: 'Defeat Green Slimes', targetType: 'KILL', targetId: 'SLIME', requiredAmount: 3, currentAmount: 0, completed: false }
+        ],
+        rewardXp: 100,
+        rewardGold: 75,
+        status: 'ACTIVE'
+      },
+      {
+        id: 'q2_goblins',
+        title: 'Dark Forest Scout',
+        description: 'Travel into the Dark Forest and defeat 3 Goblin Warriors.',
+        objectives: [
+          { id: 'obj2', description: 'Defeat Goblin Warriors', targetType: 'KILL', targetId: 'GOBLIN', requiredAmount: 3, currentAmount: 0, completed: false }
+        ],
+        rewardXp: 200,
+        rewardGold: 150,
+        status: 'NOT_STARTED'
+      },
+      {
+        id: 'q3_boss',
+        title: 'The Missing Crystal & Guardian',
+        description: 'Enter the Final Dungeon and defeat the Vortex Guardian boss.',
+        objectives: [
+          { id: 'obj3', description: 'Defeat Vortex Guardian', targetType: 'BOSS', targetId: 'BOSS', requiredAmount: 1, currentAmount: 0, completed: false }
+        ],
+        rewardXp: 800,
+        rewardGold: 600,
+        status: 'NOT_STARTED'
+      }
+    ];
+  }
+
+  public notifyKill(enemyType: string): void {
+    this.quests.forEach(quest => {
+      if (quest.status === 'ACTIVE') {
+        quest.objectives.forEach(obj => {
+          if (obj.targetType === 'KILL' && (obj.targetId === enemyType || obj.targetId === 'ANY')) {
+            if (!obj.completed) {
+              obj.currentAmount = Math.min(obj.requiredAmount, obj.currentAmount + 1);
+              if (obj.currentAmount >= obj.requiredAmount) {
+                obj.completed = true;
+                console.log(`[QuestLog] Objective completed: ${obj.description}`);
+              }
+            }
+          }
+          if (obj.targetType === 'BOSS' && enemyType === 'BOSS') {
+            if (!obj.completed) {
+              obj.currentAmount = 1;
+              obj.completed = true;
+              console.log(`[QuestLog] Boss Objective completed: ${obj.description}`);
+            }
+          }
+        });
+
+        // Check if all objectives completed
+        const allDone = quest.objectives.every(o => o.completed);
+        if (allDone && quest.status === 'ACTIVE') {
+          quest.status = 'COMPLETED';
+          console.log(`[QuestLog] Quest Completed: ${quest.title}`);
+        }
+      }
+    });
+  }
+
+  public claimReward(questId: string, player: { addXp: (amount: number) => void; stats: PlayerStats }): boolean {
+    const quest = this.quests.find(q => q.id === questId);
+    if (quest && quest.status === 'COMPLETED') {
+      quest.status = 'CLAIMED';
+      player.addXp(quest.rewardXp);
+      player.stats.gold += quest.rewardGold;
+      console.log(`[QuestLog] Claimed rewards for ${quest.title}: +${quest.rewardXp} XP, +${quest.rewardGold} Gold.`);
+
+      // Unlock next quest in chain
+      if (questId === 'q1_slimes') {
+        const q2 = this.quests.find(q => q.id === 'q2_goblins');
+        if (q2) q2.status = 'ACTIVE';
+      } else if (questId === 'q2_goblins') {
+        const q3 = this.quests.find(q => q.id === 'q3_boss');
+        if (q3) q3.status = 'ACTIVE';
+      }
+
+      return true;
+    }
+    return false;
   }
-
-  public processGameplayTick_40(dt: number): void {
-    this.playerStats.hp = Math.min(100, this.playerStats.hp + dt * 0.1);
-  }
-
-  public processGameplayTick_41(dt: number): void {
-    this.playerStats.hp = Math.min(100, this.playerStats.hp + dt * 0.1);
-  }
-
-  public processGameplayTick_42(dt: number): void {
-    this.playerStats.hp = Math.min(100, this.playerStats.hp + dt * 0.1);
-  }
-
-  public processGameplayTick_43(dt: number): void {
-    this.playerStats.hp = Math.min(100, this.playerStats.hp + dt * 0.1);
-  }
-
-  public processGameplayTick_44(dt: number): void {
-    this.playerStats.hp = Math.min(100, this.playerStats.hp + dt * 0.1);
-  }
-
-  public processGameplayTick_45(dt: number): void {
-    this.playerStats.hp = Math.min(100, this.playerStats.hp + dt * 0.1);
-  }
-
-  public processGameplayTick_46(dt: number): void {
-    this.playerStats.hp = Math.min(100, this.playerStats.hp + dt * 0.1);
-  }
-
-  public processGameplayTick_47(dt: number): void {
-    this.playerStats.hp = Math.min(100, this.playerStats.hp + dt * 0.1);
-  }
-
-  public processGameplayTick_48(dt: number): void {
-    this.playerStats.hp = Math.min(100, this.playerStats.hp + dt * 0.1);
-  }
-
-  public processGameplayTick_49(dt: number): void {
-    this.playerStats.hp = Math.min(100, this.playerStats.hp + dt * 0.1);
-  }
-
-  public processGameplayTick_50(dt: number): void {
-    this.playerStats.hp = Math.min(100, this.playerStats.hp + dt * 0.1);
-  }
-
-  public processGameplayTick_51(dt: number): void {
-    this.playerStats.hp = Math.min(100, this.playerStats.hp + dt * 0.1);
-  }
-
-  public processGameplayTick_52(dt: number): void {
-    this.playerStats.hp = Math.min(100, this.playerStats.hp + dt * 0.1);
-  }
-
-  public processGameplayTick_53(dt: number): void {
-    this.playerStats.hp = Math.min(100, this.playerStats.hp + dt * 0.1);
-  }
-
-  public processGameplayTick_54(dt: number): void {
-    this.playerStats.hp = Math.min(100, this.playerStats.hp + dt * 0.1);
-  }
-
-  public processGameplayTick_55(dt: number): void {
-    this.playerStats.hp = Math.min(100, this.playerStats.hp + dt * 0.1);
-  }
-
-  public processGameplayTick_56(dt: number): void {
-    this.playerStats.hp = Math.min(100, this.playerStats.hp + dt * 0.1);
-  }
-
-  public processGameplayTick_57(dt: number): void {
-    this.playerStats.hp = Math.min(100, this.playerStats.hp + dt * 0.1);
-  }
-
-  public processGameplayTick_58(dt: number): void {
-    this.playerStats.hp = Math.min(100, this.playerStats.hp + dt * 0.1);
-  }
-
-  public processGameplayTick_59(dt: number): void {
-    this.playerStats.hp = Math.min(100, this.playerStats.hp + dt * 0.1);
-  }
-
-  public processGameplayTick_60(dt: number): void {
-    this.playerStats.hp = Math.min(100, this.playerStats.hp + dt * 0.1);
-  }
-
-  public processGameplayTick_61(dt: number): void {
-    this.playerStats.hp = Math.min(100, this.playerStats.hp + dt * 0.1);
-  }
-
-  public processGameplayTick_62(dt: number): void {
-    this.playerStats.hp = Math.min(100, this.playerStats.hp + dt * 0.1);
-  }
-
-  public processGameplayTick_63(dt: number): void {
-    this.playerStats.hp = Math.min(100, this.playerStats.hp + dt * 0.1);
-  }
-
-  public processGameplayTick_64(dt: number): void {
-    this.playerStats.hp = Math.min(100, this.playerStats.hp + dt * 0.1);
-  }
-
-  public processGameplayTick_65(dt: number): void {
-    this.playerStats.hp = Math.min(100, this.playerStats.hp + dt * 0.1);
-  }
-
-  public processGameplayTick_66(dt: number): void {
-    this.playerStats.hp = Math.min(100, this.playerStats.hp + dt * 0.1);
-  }
-
-  public processGameplayTick_67(dt: number): void {
-    this.playerStats.hp = Math.min(100, this.playerStats.hp + dt * 0.1);
-  }
-
-  public processGameplayTick_68(dt: number): void {
-    this.playerStats.hp = Math.min(100, this.playerStats.hp + dt * 0.1);
-  }
-
-  public processGameplayTick_69(dt: number): void {
-    this.playerStats.hp = Math.min(100, this.playerStats.hp + dt * 0.1);
-  }
-
-  public processGameplayTick_70(dt: number): void {
-    this.playerStats.hp = Math.min(100, this.playerStats.hp + dt * 0.1);
-  }
-
-  public processGameplayTick_71(dt: number): void {
-    this.playerStats.hp = Math.min(100, this.playerStats.hp + dt * 0.1);
-  }
-
-  public processGameplayTick_72(dt: number): void {
-    this.playerStats.hp = Math.min(100, this.playerStats.hp + dt * 0.1);
-  }
-
-  public processGameplayTick_73(dt: number): void {
-    this.playerStats.hp = Math.min(100, this.playerStats.hp + dt * 0.1);
-  }
-
-  public processGameplayTick_74(dt: number): void {
-    this.playerStats.hp = Math.min(100, this.playerStats.hp + dt * 0.1);
-  }
-
-  public processGameplayTick_75(dt: number): void {
-    this.playerStats.hp = Math.min(100, this.playerStats.hp + dt * 0.1);
-  }
-
-  public processGameplayTick_76(dt: number): void {
-    this.playerStats.hp = Math.min(100, this.playerStats.hp + dt * 0.1);
-  }
-
-  public processGameplayTick_77(dt: number): void {
-    this.playerStats.hp = Math.min(100, this.playerStats.hp + dt * 0.1);
-  }
-
-  public processGameplayTick_78(dt: number): void {
-    this.playerStats.hp = Math.min(100, this.playerStats.hp + dt * 0.1);
-  }
-
-  public processGameplayTick_79(dt: number): void {
-    this.playerStats.hp = Math.min(100, this.playerStats.hp + dt * 0.1);
-  }
-
-  public processGameplayTick_80(dt: number): void {
-    this.playerStats.hp = Math.min(100, this.playerStats.hp + dt * 0.1);
-  }
-
-  public processGameplayTick_81(dt: number): void {
-    this.playerStats.hp = Math.min(100, this.playerStats.hp + dt * 0.1);
-  }
-
-  public processGameplayTick_82(dt: number): void {
-    this.playerStats.hp = Math.min(100, this.playerStats.hp + dt * 0.1);
-  }
-
-  public processGameplayTick_83(dt: number): void {
-    this.playerStats.hp = Math.min(100, this.playerStats.hp + dt * 0.1);
-  }
-
-  public processGameplayTick_84(dt: number): void {
-    this.playerStats.hp = Math.min(100, this.playerStats.hp + dt * 0.1);
-  }
-
-  public processGameplayTick_85(dt: number): void {
-    this.playerStats.hp = Math.min(100, this.playerStats.hp + dt * 0.1);
-  }
-
-  public processGameplayTick_86(dt: number): void {
-    this.playerStats.hp = Math.min(100, this.playerStats.hp + dt * 0.1);
-  }
-
-  public processGameplayTick_87(dt: number): void {
-    this.playerStats.hp = Math.min(100, this.playerStats.hp + dt * 0.1);
-  }
-
-  public processGameplayTick_88(dt: number): void {
-    this.playerStats.hp = Math.min(100, this.playerStats.hp + dt * 0.1);
-  }
-
-  public processGameplayTick_89(dt: number): void {
-    this.playerStats.hp = Math.min(100, this.playerStats.hp + dt * 0.1);
-  }
-
-  public processGameplayTick_90(dt: number): void {
-    this.playerStats.hp = Math.min(100, this.playerStats.hp + dt * 0.1);
-  }
-
-  public getPlayerStats() { return this.playerStats; }
 }
