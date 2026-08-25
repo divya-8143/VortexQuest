@@ -1,6 +1,7 @@
 export enum GameState {
   BOOT = 'BOOT',
   MAIN_MENU = 'MAIN_MENU',
+  MANUAL = 'MANUAL',
   PLAYING = 'PLAYING',
   PAUSED = 'PAUSED',
   INVENTORY = 'INVENTORY',

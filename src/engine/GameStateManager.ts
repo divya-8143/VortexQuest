@@ -36,6 +36,7 @@ export class GameStateManager {
   public floatingTexts: FloatingText[] = [];
   public projectiles: Projectile[] = [];
   public activeNPC: NPCData | null = null;
+  public canvas: HTMLCanvasElement | null = null;
 
   constructor() {
     this.player = new Player(400, 400);
@@ -45,23 +46,55 @@ export class GameStateManager {
     this.camera = new Camera2D(1024, 576);
   }
 
+  public setCanvas(canvas: HTMLCanvasElement): void {
+    this.canvas = canvas;
+  }
+
   public update(deltaTime: number): void {
+    const mouseClicked = this.input.isMouseJustClicked();
+    const mousePos = this.canvas ? this.input.getCanvasMousePos(this.canvas) : { x: 0, y: 0 };
+
     switch (this.currentState) {
       case GameState.MAIN_MENU:
-        if (this.input.isKeyJustPressed(' ') || this.input.isKeyJustPressed('enter')) {
+        if (this.input.isKeyJustPressed(' ') || this.input.isKeyJustPressed('enter') || mouseClicked) {
           this.startNewGame();
         } else if (this.input.isKeyJustPressed('c') && SaveSystem.hasSave()) {
           this.continueGame();
+        } else if (this.input.isKeyJustPressed('m')) {
+          this.currentState = GameState.MANUAL;
+        }
+        break;
+
+      case GameState.MANUAL:
+        if (this.input.isKeyJustPressed(' ') || this.input.isKeyJustPressed('enter') || this.input.isKeyJustPressed('escape') || mouseClicked) {
+          this.currentState = GameState.PLAYING;
         }
         break;
 
       case GameState.PLAYING:
+        // Check Pause Button Click (Top-Right ⏸️ Button at x: 970-1010, y: 15-55)
+        if (mouseClicked && mousePos.x >= 960 && mousePos.x <= 1010 && mousePos.y >= 15 && mousePos.y <= 55) {
+          this.currentState = GameState.PAUSED;
+          return;
+        }
         this.updatePlayingState(deltaTime);
         break;
 
       case GameState.PAUSED:
         if (this.input.isKeyJustPressed('escape')) {
           this.currentState = GameState.PLAYING;
+        } else if (this.input.isKeyJustPressed('s')) {
+          this.saveCurrentGame();
+        } else if (this.input.isKeyJustPressed('m')) {
+          this.currentState = GameState.MANUAL;
+        } else if (mouseClicked) {
+          // Pause menu button clicks
+          if (mousePos.x >= 362 && mousePos.x <= 662) {
+            if (mousePos.y >= 240 && mousePos.y <= 285) this.currentState = GameState.PLAYING; // Resume
+            else if (mousePos.y >= 300 && mousePos.y <= 345) this.saveCurrentGame(); // Save
+            else if (mousePos.y >= 360 && mousePos.y <= 405) this.currentState = GameState.MANUAL; // Manual
+            else if (mousePos.y >= 420 && mousePos.y <= 465) this.currentState = GameState.MAIN_MENU; // Main Menu
+          }
         }
         break;
 
@@ -87,7 +120,7 @@ export class GameStateManager {
 
       case GameState.GAME_OVER:
       case GameState.VICTORY:
-        if (this.input.isKeyJustPressed('r') || this.input.isKeyJustPressed(' ')) {
+        if (this.input.isKeyJustPressed('r') || this.input.isKeyJustPressed(' ') || mouseClicked) {
           this.startNewGame();
         }
         break;
@@ -100,8 +133,8 @@ export class GameStateManager {
     this.questLog = new QuestLog();
     this.projectiles = [];
     this.floatingTexts = [];
-    this.currentState = GameState.PLAYING;
-    console.log('[GameStateManager] New game started!');
+    this.currentState = GameState.MANUAL; // Show manual first on starting game!
+    console.log('[GameStateManager] New game started - Showing manual.');
   }
 
   public continueGame(): void {
@@ -138,7 +171,7 @@ export class GameStateManager {
 
   private updatePlayingState(deltaTime: number): void {
     // Menu toggles
-    if (this.input.isKeyJustPressed('escape')) {
+    if (this.input.isKeyJustPressed('escape') || this.input.isKeyJustPressed('p')) {
       this.currentState = GameState.PAUSED;
       return;
     }
@@ -214,7 +247,6 @@ export class GameStateManager {
         const { attackTriggered, isRanged } = enemy.updateAI(this.player.stats.x, this.player.stats.y, deltaTime);
         if (attackTriggered) {
           if (isRanged) {
-            // Spawn Ranged Projectile
             const dx = this.player.stats.x - enemy.x;
             const dy = this.player.stats.y - enemy.y;
             const dist = Math.sqrt(dx * dx + dy * dy);
@@ -228,7 +260,6 @@ export class GameStateManager {
               fromEnemy: true
             });
           } else {
-            // Melee attack player
             const dmgTaken = this.player.takeDamage(enemy.attack);
             this.addFloatingText(`-${dmgTaken}`, this.player.stats.x, this.player.stats.y - 20, '#f85149');
             this.camera.triggerShake(5, 0.2);
@@ -245,7 +276,6 @@ export class GameStateManager {
     for (let i = currentZone.enemies.length - 1; i >= 0; i--) {
       const enemy = currentZone.enemies[i];
       if (enemy.hp <= 0) {
-        // Award XP & Gold
         const leveledUp = this.player.addXp(enemy.xpReward);
         this.player.stats.gold += enemy.goldReward;
         this.addFloatingText(`+${enemy.xpReward} XP  +${enemy.goldReward} Gold`, enemy.x, enemy.y, '#e3b341');
@@ -254,17 +284,14 @@ export class GameStateManager {
           this.addFloatingText(`LEVEL UP! (Lvl ${this.player.stats.level})`, this.player.stats.x, this.player.stats.y - 45, '#3fb950');
         }
 
-        // Drop Loot Item into Inventory
         const itemDrop = enemy.generateLoot();
         if (itemDrop) {
           this.addItemToInventory(itemDrop);
           this.addFloatingText(`Looted: ${itemDrop.name}`, enemy.x, enemy.y - 20, '#bc8cff');
         }
 
-        // Notify Quest Log
         this.questLog.notifyKill(enemy.type);
 
-        // If Boss defeated, trigger victory
         if (enemy.isBoss) {
           this.currentState = GameState.VICTORY;
         }
@@ -273,7 +300,6 @@ export class GameStateManager {
       }
     }
 
-    // Update Floating Texts
     this.updateFloatingTexts(deltaTime);
   }
 
@@ -290,7 +316,6 @@ export class GameStateManager {
 
         if (dist <= range + enemy.radius) {
           hitAny = true;
-          // Check Critical Hit
           const isCrit = Math.random() < this.player.stats.critChance;
           const rawDmg = isCrit ? totalAttack * this.player.stats.critDamage : totalAttack;
           const finalDmg = enemy.takeDamage(rawDmg);
@@ -299,7 +324,6 @@ export class GameStateManager {
           const text = isCrit ? `CRIT! -${finalDmg}` : `-${finalDmg}`;
           this.addFloatingText(text, enemy.x, enemy.y - 15, color);
 
-          // Knockback
           if (dist > 0) {
             enemy.x += (dx / dist) * 15;
             enemy.y += (dy / dist) * 15;
@@ -327,7 +351,6 @@ export class GameStateManager {
       return;
     }
 
-    // Deduct Mana & trigger Cooldown
     this.player.stats.mana -= skill.manaCost;
     skill.currentCooldown = skill.cooldown;
 
@@ -372,7 +395,6 @@ export class GameStateManager {
         }
       }
 
-      // Out of bounds cleanup
       const currentZone = this.world.getCurrentZone();
       if (p.x < 0 || p.x > currentZone.width || p.y < 0 || p.y > currentZone.height) {
         this.projectiles.splice(i, 1);
@@ -381,7 +403,6 @@ export class GameStateManager {
   }
 
   public addItemToInventory(item: ItemData): boolean {
-    // Check stackable item
     if (item.stackable) {
       const existing = this.player.inventory.find(i => i && i.id.startsWith(item.id.split('_')[0]));
       if (existing) {
@@ -390,7 +411,6 @@ export class GameStateManager {
       }
     }
 
-    // Find empty slot
     const emptyIndex = this.player.inventory.findIndex(i => i === null);
     if (emptyIndex !== -1) {
       this.player.inventory[emptyIndex] = item;

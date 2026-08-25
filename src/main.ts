@@ -13,6 +13,7 @@ class VortexQuestApp {
     }
 
     this.gsm = new GameStateManager();
+    this.gsm.setCanvas(canvas);
     this.renderer = new Canvas2DRenderer(canvas);
 
     this.lastTime = performance.now();

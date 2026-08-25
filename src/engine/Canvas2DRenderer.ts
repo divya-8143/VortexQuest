@@ -20,6 +20,10 @@ export class Canvas2DRenderer {
         this.renderMainMenu(gsm);
         break;
 
+      case GameState.MANUAL:
+        this.renderManualScreen(gsm);
+        break;
+
       case GameState.PLAYING:
       case GameState.PAUSED:
       case GameState.INVENTORY:
@@ -57,25 +61,88 @@ export class Canvas2DRenderer {
     ctx.fillStyle = '#58a6ff';
     ctx.font = 'bold 54px system-ui, sans-serif';
     ctx.textAlign = 'center';
-    ctx.fillText('VORTEX QUEST', this.canvas.width / 2, 200);
+    ctx.fillText('VORTEX QUEST', this.canvas.width / 2, 180);
 
     ctx.fillStyle = '#e6edf3';
     ctx.font = '20px system-ui, sans-serif';
-    ctx.fillText('Enterprise 2D Action RPG Engine', this.canvas.width / 2, 250);
+    ctx.fillText('Enterprise 2D Action RPG Engine', this.canvas.width / 2, 230);
 
     // Options
     ctx.fillStyle = '#3fb950';
     ctx.font = 'bold 24px system-ui, sans-serif';
-    ctx.fillText('[ Press SPACE or ENTER for NEW GAME ]', this.canvas.width / 2, 360);
+    ctx.fillText('[ Press SPACE / ENTER or CLICK for NEW GAME ]', this.canvas.width / 2, 340);
 
     if (SaveSystem.hasSave()) {
       ctx.fillStyle = '#bc8cff';
-      ctx.fillText('[ Press C to CONTINUE GAME ]', this.canvas.width / 2, 420);
+      ctx.fillText('[ Press C to CONTINUE GAME ]', this.canvas.width / 2, 400);
     }
 
+    ctx.fillStyle = '#e3b341';
+    ctx.font = 'bold 20px system-ui, sans-serif';
+    ctx.fillText('[ Press M for GAME MANUAL & CONTROLS ]', this.canvas.width / 2, 460);
+
     ctx.fillStyle = '#8b949e';
-    ctx.font = '16px system-ui, sans-serif';
-    ctx.fillText('Controls: WASD / Arrows = Move  |  Space = Attack  |  1-4, Q = Skills  |  E = Interact  |  I = Inventory  |  L = Quests', this.canvas.width / 2, 510);
+    ctx.font = '14px system-ui, sans-serif';
+    ctx.fillText('Controls: WASD = Move | Space = Attack | 1-4, Q = Skills | E = Talk | I = Inventory | L = Quests', this.canvas.width / 2, 530);
+  }
+
+  private renderManualScreen(gsm: GameStateManager): void {
+    const ctx = this.ctx;
+    ctx.fillStyle = '#0b0e14';
+    ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+
+    ctx.fillStyle = 'rgba(22, 27, 34, 0.95)';
+    ctx.fillRect(50, 40, this.canvas.width - 100, this.canvas.height - 80);
+    ctx.strokeStyle = '#58a6ff';
+    ctx.lineWidth = 2;
+    ctx.strokeRect(50, 40, this.canvas.width - 100, this.canvas.height - 80);
+
+    ctx.fillStyle = '#58a6ff'; ctx.font = 'bold 30px system-ui'; ctx.textAlign = 'center';
+    ctx.fillText('📖 VORTEX QUEST - GAME MANUAL & INSTRUCTIONS', this.canvas.width / 2, 85);
+
+    ctx.textAlign = 'left';
+    ctx.font = '14px system-ui';
+
+    // Column 1: Story & Movement
+    ctx.fillStyle = '#e3b341'; ctx.font = 'bold 16px system-ui';
+    ctx.fillText('1. STORY & OBJECTIVE', 80, 130);
+    ctx.fillStyle = '#e6edf3'; ctx.font = '13px system-ui';
+    ctx.fillText('• You are the Vortex Hero tasked with saving the realm.', 80, 155);
+    ctx.fillText('• Explore 5 connected zones: Peaceful Village -> Green Forest ->', 80, 175);
+    ctx.fillText('  Dark Forest -> Crystal Cave -> Final Dungeon.', 80, 195);
+    ctx.fillText('• Defeat the Vortex Guardian Boss to claim ultimate victory!', 80, 215);
+
+    ctx.fillStyle = '#e3b341'; ctx.font = 'bold 16px system-ui';
+    ctx.fillText('2. CONTROLS & MOVEMENT', 80, 255);
+    ctx.fillStyle = '#e6edf3'; ctx.font = '13px system-ui';
+    ctx.fillText('• Movement: WASD or Arrow Keys', 80, 280);
+    ctx.fillText('• Basic Attack: Spacebar', 80, 300);
+    ctx.fillText('• Talk / Shop Interaction: E key (near NPCs & Merchants)', 80, 320);
+    ctx.fillText('• Inventory Window: I key', 80, 340);
+    ctx.fillText('• Quest Log: L key', 80, 360);
+    ctx.fillText('• Pause Game / Save Menu: ESC key or Click ⏸️ Button', 80, 380);
+
+    // Column 2: Combat & Skills
+    ctx.fillStyle = '#e3b341'; ctx.font = 'bold 16px system-ui';
+    ctx.fillText('3. SKILLS & HOTKEYS', 540, 130);
+    ctx.fillStyle = '#e6edf3'; ctx.font = '13px system-ui';
+    ctx.fillText('• 1 Key: Fire Slash (200% weapon damage)', 540, 155);
+    ctx.fillText('• 2 Key: Vortex Dash (Forward evade dash)', 540, 175);
+    ctx.fillText('• 3 Key: Lightning Storm (250% AOE strike)', 540, 195);
+    ctx.fillText('• 4 Key: Divine Heal (Restores 40% Max HP)', 540, 215);
+    ctx.fillText('• Q Key: Vortex Annihilation (400% Ultimate)', 540, 235);
+
+    ctx.fillStyle = '#e3b341'; ctx.font = 'bold 16px system-ui';
+    ctx.fillText('4. PROGRESSION & SAVING', 540, 275);
+    ctx.fillStyle = '#e6edf3'; ctx.font = '13px system-ui';
+    ctx.fillText('• Defeating enemies grants XP, Gold, and rare Loot drops.', 540, 300);
+    ctx.fillText('• Leveling up increases Max HP, Mana, Attack, and Defense.', 540, 320);
+    ctx.fillText('• Equip weapons & armor to boost stats instantly.', 540, 340);
+    ctx.fillText('• Press ESC or click ⏸️ -> Click "Save Game" to persist progress.', 540, 360);
+
+    // Start Button Box
+    ctx.fillStyle = '#3fb950'; ctx.font = 'bold 22px system-ui'; ctx.textAlign = 'center';
+    ctx.fillText('[ Press SPACE / ENTER or CLICK HERE to START PLAYING! ]', this.canvas.width / 2, 475);
   }
 
   private renderWorldAndGameplay(gsm: GameStateManager): void {
@@ -126,16 +193,13 @@ export class Canvas2DRenderer {
     // Render Enemies
     currentZone.enemies.forEach(enemy => {
       if (enemy.hp > 0) {
-        // Enemy Body
         ctx.fillStyle = enemy.isBoss ? '#da3633' : '#f85149';
         ctx.beginPath(); ctx.arc(enemy.x, enemy.y, enemy.radius, 0, Math.PI * 2); ctx.fill();
         ctx.strokeStyle = '#30363d'; ctx.lineWidth = 2; ctx.stroke();
 
-        // Enemy Name
         ctx.fillStyle = '#ffffff'; ctx.font = enemy.isBoss ? 'bold 16px system-ui' : '12px system-ui'; ctx.textAlign = 'center';
         ctx.fillText(enemy.name, enemy.x, enemy.y - enemy.radius - 12);
 
-        // Enemy Health Bar
         const barWidth = enemy.radius * 2.4;
         const barHeight = 5;
         const hpRatio = Math.max(0, enemy.hp / enemy.maxHp);
@@ -156,7 +220,6 @@ export class Canvas2DRenderer {
     ctx.beginPath(); ctx.arc(player.stats.x, player.stats.y, player.stats.radius, 0, Math.PI * 2); ctx.fill();
     ctx.strokeStyle = '#1f6beb'; ctx.lineWidth = 3; ctx.stroke();
 
-    // Attack Range Highlight on Space
     if (gsm.input.isKeyDown(' ')) {
       ctx.strokeStyle = 'rgba(88, 166, 255, 0.4)';
       ctx.lineWidth = 3;
@@ -213,13 +276,23 @@ export class Canvas2DRenderer {
 
     // Gold & Zone Info (Top-Right)
     ctx.fillStyle = 'rgba(22, 27, 34, 0.85)';
-    ctx.fillRect(this.canvas.width - 230, 15, 215, 70);
-    ctx.strokeRect(this.canvas.width - 230, 15, 215, 70);
+    ctx.fillRect(this.canvas.width - 280, 15, 200, 70);
+    ctx.strokeRect(this.canvas.width - 280, 15, 200, 70);
 
     ctx.fillStyle = '#e3b341'; ctx.font = 'bold 15px system-ui'; ctx.textAlign = 'right';
-    ctx.fillText(`💰 Gold: ${player.stats.gold}`, this.canvas.width - 25, 38);
+    ctx.fillText(`💰 Gold: ${player.stats.gold}`, this.canvas.width - 95, 38);
     ctx.fillStyle = '#bc8cff'; ctx.font = '13px system-ui';
-    ctx.fillText(`📍 ${gsm.world.getCurrentZone().name}`, this.canvas.width - 25, 62);
+    ctx.fillText(`📍 ${gsm.world.getCurrentZone().name}`, this.canvas.width - 95, 62);
+
+    // INTERACTIVE PAUSE BUTTON ⏸️ (Top-Right: x: 960-1010, y: 15-55)
+    ctx.fillStyle = 'rgba(22, 27, 34, 0.9)';
+    ctx.fillRect(960, 15, 50, 40);
+    ctx.strokeStyle = '#58a6ff';
+    ctx.lineWidth = 2;
+    ctx.strokeRect(960, 15, 50, 40);
+
+    ctx.fillStyle = '#ffffff'; ctx.font = '22px system-ui'; ctx.textAlign = 'center';
+    ctx.fillText('⏸️', 985, 43);
 
     // Boss Health Bar Overlay (if Boss in zone)
     const boss = gsm.world.getCurrentZone().enemies.find(e => e.isBoss && e.hp > 0);
@@ -256,21 +329,38 @@ export class Canvas2DRenderer {
 
   private renderPauseMenu(gsm: GameStateManager): void {
     const ctx = this.ctx;
-    ctx.fillStyle = 'rgba(11, 14, 20, 0.8)'; ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+    ctx.fillStyle = 'rgba(11, 14, 20, 0.85)'; ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
 
-    ctx.fillStyle = '#58a6ff'; ctx.font = 'bold 36px system-ui'; ctx.textAlign = 'center';
-    ctx.fillText('PAUSED', this.canvas.width / 2, 200);
+    ctx.fillStyle = '#58a6ff'; ctx.font = 'bold 42px system-ui'; ctx.textAlign = 'center';
+    ctx.fillText('PAUSED', this.canvas.width / 2, 170);
 
-    ctx.fillStyle = '#e6edf3'; ctx.font = '20px system-ui';
-    ctx.fillText('[ Press ESC to Resume ]', this.canvas.width / 2, 280);
-    ctx.fillText('[ Press I for Inventory | L for Quests ]', this.canvas.width / 2, 330);
+    const btnWidth = 300;
+    const btnHeight = 45;
+    const btnX = this.canvas.width / 2 - btnWidth / 2;
 
-    ctx.fillStyle = '#3fb950'; ctx.font = 'bold 20px system-ui';
-    ctx.fillText('[ Press S to Save Game Progress ]', this.canvas.width / 2, 400);
+    // 1. Resume Game Button
+    ctx.fillStyle = '#21262d'; ctx.fillRect(btnX, 240, btnWidth, btnHeight);
+    ctx.strokeStyle = '#58a6ff'; ctx.lineWidth = 2; ctx.strokeRect(btnX, 240, btnWidth, btnHeight);
+    ctx.fillStyle = '#ffffff'; ctx.font = 'bold 18px system-ui';
+    ctx.fillText('▶️ Resume Game (ESC)', this.canvas.width / 2, 268);
 
-    if (gsm.input.isKeyJustPressed('s')) {
-      gsm.saveCurrentGame();
-    }
+    // 2. Save Game Button
+    ctx.fillStyle = '#21262d'; ctx.fillRect(btnX, 300, btnWidth, btnHeight);
+    ctx.strokeStyle = '#3fb950'; ctx.strokeRect(btnX, 300, btnWidth, btnHeight);
+    ctx.fillStyle = '#3fb950';
+    ctx.fillText('💾 Save Game (Press S)', this.canvas.width / 2, 328);
+
+    // 3. Manual / Instructions Button
+    ctx.fillStyle = '#21262d'; ctx.fillRect(btnX, 360, btnWidth, btnHeight);
+    ctx.strokeStyle = '#e3b341'; ctx.strokeRect(btnX, 360, btnWidth, btnHeight);
+    ctx.fillStyle = '#e3b341';
+    ctx.fillText('📖 Game Manual / Controls', this.canvas.width / 2, 388);
+
+    // 4. Main Menu Button
+    ctx.fillStyle = '#21262d'; ctx.fillRect(btnX, 420, btnWidth, btnHeight);
+    ctx.strokeStyle = '#da3633'; ctx.strokeRect(btnX, 420, btnWidth, btnHeight);
+    ctx.fillStyle = '#f85149';
+    ctx.fillText('🏠 Main Menu', this.canvas.width / 2, 448);
   }
 
   private renderInventoryUI(gsm: GameStateManager): void {
@@ -360,7 +450,6 @@ export class Canvas2DRenderer {
     ctx.fillStyle = '#ffffff'; ctx.font = '16px system-ui';
     ctx.fillText(`Your Gold: 💰 ${gsm.player.stats.gold}`, 130, 160);
 
-    // Item 1: Health Potion (25 Gold)
     ctx.fillStyle = '#58a6ff'; ctx.font = 'bold 16px system-ui';
     ctx.fillText('1. Health Potion - 💰 25 Gold (Restores 50 HP) [Press 1 to Buy]', 130, 210);
     if (gsm.input.isKeyJustPressed('1') && gsm.player.stats.gold >= 25) {
@@ -381,7 +470,6 @@ export class Canvas2DRenderer {
       gsm.addFloatingText('Bought Health Potion!', gsm.player.stats.x, gsm.player.stats.y - 20, '#3fb950');
     }
 
-    // Item 2: Iron Longsword (120 Gold)
     ctx.fillText('2. Iron Longsword - 💰 120 Gold (+20 Attack) [Press 2 to Buy]', 130, 260);
     if (gsm.input.isKeyJustPressed('2') && gsm.player.stats.gold >= 120) {
       gsm.player.stats.gold -= 120;

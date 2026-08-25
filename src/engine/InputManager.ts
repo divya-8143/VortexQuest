@@ -4,6 +4,7 @@ export class InputManager {
   public mouseX: number = 0;
   public mouseY: number = 0;
   public mouseDown: boolean = false;
+  public mouseJustClicked: boolean = false;
 
   constructor() {
     window.addEventListener('keydown', (e) => {
@@ -25,8 +26,9 @@ export class InputManager {
       this.mouseY = e.clientY;
     });
 
-    window.addEventListener('mousedown', () => {
+    window.addEventListener('mousedown', (e) => {
       this.mouseDown = true;
+      this.mouseJustClicked = true;
     });
 
     window.addEventListener('mouseup', () => {
@@ -47,7 +49,26 @@ export class InputManager {
     return false;
   }
 
+  public isMouseJustClicked(): boolean {
+    if (this.mouseJustClicked) {
+      this.mouseJustClicked = false;
+      return true;
+    }
+    return false;
+  }
+
+  public getCanvasMousePos(canvas: HTMLCanvasElement): { x: number; y: number } {
+    const rect = canvas.getBoundingClientRect();
+    const scaleX = canvas.width / rect.width;
+    const scaleY = canvas.height / rect.height;
+    return {
+      x: (this.mouseX - rect.left) * scaleX,
+      y: (this.mouseY - rect.top) * scaleY
+    };
+  }
+
   public clearFrameInputs(): void {
     this.justPressed.clear();
+    this.mouseJustClicked = false;
   }
 }
