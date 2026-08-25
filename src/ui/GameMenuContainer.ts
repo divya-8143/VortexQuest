@@ -1,11 +1,15 @@
 import { GameStateManager } from '../engine/GameStateManager';
 import { gameRegistry } from '../data/GameRegistry';
+import { SaveSystem } from '../utils/SaveSystem';
+import { GameState } from '../types/GameTypes';
 
 export class GameMenuContainer {
   public activeTab: string = 'hidden'; // 'hidden' | 'inventory' | 'skills' | 'quests' | 'character' | 'shop' | 'settings'
   private containerEl: HTMLElement | null = null;
   private questTrackerEl: HTMLElement | null = null;
   private hotbarEl: HTMLElement | null = null;
+  private mainMenuEl: HTMLElement | null = null;
+  private manualEl: HTMLElement | null = null;
 
   constructor() {
     this.injectUIOverlay();
@@ -24,8 +28,20 @@ export class GameMenuContainer {
     }
 
     overlay.innerHTML = `
+      <!-- Main Menu HTML GUI Buttons -->
+      <div id="main-menu-gui" style="display:none;position:absolute;top:50%;left:50%;transform:translate(-50%,-40%);flex-direction:column;align-items:center;gap:16px;pointer-events:auto;z-index:25;">
+        <button id="btn-new-game" class="rpg-btn" style="width:340px;padding:16px 24px;font-size:20px;font-weight:bold;cursor:pointer;border-radius:8px;box-shadow:0 6px 20px rgba(0,0,0,0.8);">⚔️ START NEW GAME</button>
+        <button id="btn-continue-game" class="rpg-btn" style="width:340px;padding:16px 24px;font-size:20px;font-weight:bold;cursor:pointer;border-radius:8px;box-shadow:0 6px 20px rgba(0,0,0,0.8);">💾 CONTINUE GAME</button>
+        <button id="btn-manual" class="rpg-btn" style="width:340px;padding:16px 24px;font-size:20px;font-weight:bold;cursor:pointer;border-radius:8px;box-shadow:0 6px 20px rgba(0,0,0,0.8);">📖 GAME MANUAL & CONTROLS</button>
+      </div>
+
+      <!-- Manual GUI Start Button -->
+      <div id="manual-gui-btn" style="display:none;position:absolute;bottom:45px;left:50%;transform:translateX(-50%);pointer-events:auto;z-index:25;">
+        <button id="btn-start-playing" class="rpg-btn" style="width:360px;padding:16px 24px;font-size:22px;font-weight:bold;cursor:pointer;border-radius:8px;background:linear-gradient(180deg, #2e7d32 0%, #1b5e20 100%);border-color:#4caf50;box-shadow:0 6px 20px rgba(0,0,0,0.8);">⚔️ START PLAYING NOW!</button>
+      </div>
+
       <!-- Right Panel: QuestTracker Positioned Safely on Right (top: 95px, right: 15px) below Gold Card -->
-      <div id="quest-tracker" class="rpg-card" style="position:absolute;top:95px;right:15px;width:220px;padding:10px;font-size:12px;pointer-events:auto;">
+      <div id="quest-tracker" class="rpg-card" style="display:none;position:absolute;top:95px;right:15px;width:220px;padding:10px;font-size:12px;pointer-events:auto;">
         <div class="rpg-header" style="color:#ffd700;font-weight:bold;margin-bottom:6px;font-size:14px;">🎯 ACTIVE QUESTS</div>
         <div id="quest-tracker-content"></div>
       </div>
@@ -48,12 +64,14 @@ export class GameMenuContainer {
       </div>
 
       <!-- Bottom Bar: Skills Hotbar Pinned Exactly at Page Bottom (bottom: 20px, left: 50%) -->
-      <div id="hotbar" style="position:absolute;bottom:20px;left:50%;transform:translateX(-50%);display:flex;justify-content:center;gap:12px;pointer-events:auto;z-index:10;"></div>
+      <div id="hotbar" style="display:none;position:absolute;bottom:20px;left:50%;transform:translateX(-50%);justify-content:center;gap:12px;pointer-events:auto;z-index:10;"></div>
     `;
 
     this.containerEl = document.getElementById('menu-modal');
-    this.questTrackerEl = document.getElementById('quest-tracker-content');
+    this.questTrackerEl = document.getElementById('quest-tracker');
     this.hotbarEl = document.getElementById('hotbar');
+    this.mainMenuEl = document.getElementById('main-menu-gui');
+    this.manualEl = document.getElementById('manual-gui-btn');
 
     document.querySelectorAll('.menu-tab-btn').forEach(btn => {
       btn.addEventListener('click', (e) => {
@@ -69,6 +87,45 @@ export class GameMenuContainer {
     });
   }
 
+  public updateVisibilityForState(state: GameState, gsm: GameStateManager): void {
+    if (state === GameState.MAIN_MENU) {
+      if (this.mainMenuEl) this.mainMenuEl.style.display = 'flex';
+      if (this.manualEl) this.manualEl.style.display = 'none';
+      if (this.questTrackerEl) this.questTrackerEl.style.display = 'none';
+      if (this.hotbarEl) this.hotbarEl.style.display = 'none';
+
+      // Update button click handlers
+      const btnNew = document.getElementById('btn-new-game');
+      const btnCont = document.getElementById('btn-continue-game');
+      const btnMan = document.getElementById('btn-manual');
+
+      if (btnNew) btnNew.onclick = () => gsm.startNewGame();
+      if (btnCont) {
+        if (SaveSystem.hasSave()) {
+          btnCont.style.opacity = '1';
+          btnCont.onclick = () => gsm.continueGame();
+        } else {
+          btnCont.style.opacity = '0.4';
+          btnCont.onclick = null;
+        }
+      }
+      if (btnMan) btnMan.onclick = () => { gsm.currentState = GameState.MANUAL; };
+    } else if (state === GameState.MANUAL) {
+      if (this.mainMenuEl) this.mainMenuEl.style.display = 'none';
+      if (this.manualEl) this.manualEl.style.display = 'flex';
+      if (this.questTrackerEl) this.questTrackerEl.style.display = 'none';
+      if (this.hotbarEl) this.hotbarEl.style.display = 'none';
+
+      const btnStart = document.getElementById('btn-start-playing');
+      if (btnStart) btnStart.onclick = () => { gsm.currentState = GameState.PLAYING; };
+    } else {
+      if (this.mainMenuEl) this.mainMenuEl.style.display = 'none';
+      if (this.manualEl) this.manualEl.style.display = 'none';
+      if (this.questTrackerEl) this.questTrackerEl.style.display = 'block';
+      if (this.hotbarEl) this.hotbarEl.style.display = 'flex';
+    }
+  }
+
   public addLog(msg: string): void {
     // System Log box removed per user request
   }
@@ -78,11 +135,12 @@ export class GameMenuContainer {
   }
 
   public updateQuestTracker(gsm: GameStateManager): void {
-    if (!this.questTrackerEl) return;
+    const trackerContent = document.getElementById('quest-tracker-content');
+    if (!trackerContent) return;
     const activeQuests = gsm.questLog.quests.filter(q => q.status === 'ACTIVE' || q.status === 'COMPLETED');
 
     if (activeQuests.length === 0) {
-      this.questTrackerEl.innerHTML = '<div style="color:#8b949e;">No active quests</div>';
+      trackerContent.innerHTML = '<div style="color:#8b949e;">No active quests</div>';
       return;
     }
 
@@ -95,7 +153,7 @@ export class GameMenuContainer {
       });
       html += `</div>`;
     });
-    this.questTrackerEl.innerHTML = html;
+    trackerContent.innerHTML = html;
   }
 
   public updateHotbar(gsm: GameStateManager): void {

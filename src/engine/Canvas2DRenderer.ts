@@ -69,23 +69,6 @@ export class Canvas2DRenderer {
     ctx.fillStyle = '#58a6ff';
     ctx.font = '22px Rajdhani, sans-serif';
     ctx.fillText('Enterprise 2D Action RPG Engine', this.canvas.width / 2, 230);
-
-    ctx.fillStyle = '#3fb950';
-    ctx.font = 'bold 24px Cinzel, serif';
-    ctx.fillText('[ Press SPACE / ENTER or CLICK for NEW GAME ]', this.canvas.width / 2, 340);
-
-    if (SaveSystem.hasSave()) {
-      ctx.fillStyle = '#bc8cff';
-      ctx.fillText('[ Press C to CONTINUE GAME ]', this.canvas.width / 2, 400);
-    }
-
-    ctx.fillStyle = '#e3b341';
-    ctx.font = 'bold 20px Cinzel, serif';
-    ctx.fillText('[ Press M for GAME MANUAL & CONTROLS ]', this.canvas.width / 2, 460);
-
-    ctx.fillStyle = '#8b949e';
-    ctx.font = '14px Rajdhani, sans-serif';
-    ctx.fillText('Controls: WASD = Move | Space = Attack | 1-4, Q = Skills | E = Talk | I = Inventory | L = Quests', this.canvas.width / 2, 530);
   }
 
   private renderManualScreen(gsm: GameStateManager): void {
@@ -139,9 +122,6 @@ export class Canvas2DRenderer {
     ctx.fillText('• Leveling up increases Max HP, Mana, Attack, and Defense.', 540, 320);
     ctx.fillText('• Equip weapons & armor to boost stats instantly.', 540, 340);
     ctx.fillText('• Press ESC or click ⏸️ -> Click "Save Game" to persist progress.', 540, 360);
-
-    ctx.fillStyle = '#3fb950'; ctx.font = 'bold 22px Cinzel, serif'; ctx.textAlign = 'center';
-    ctx.fillText('[ Press SPACE / ENTER or CLICK HERE to START PLAYING! ]', this.canvas.width / 2, 475);
   }
 
   private renderWorldAndGameplay(gsm: GameStateManager): void {
@@ -152,11 +132,9 @@ export class Canvas2DRenderer {
     ctx.save();
     ctx.translate(-offsetX, -offsetY);
 
-    // 1. Render Zone Ground Background
     ctx.fillStyle = currentZone.color;
     ctx.fillRect(0, 0, currentZone.width, currentZone.height);
 
-    // Render Ground Texture Grid
     ctx.strokeStyle = 'rgba(255, 255, 255, 0.03)';
     ctx.lineWidth = 1;
     const tileSize = 64;
@@ -167,11 +145,9 @@ export class Canvas2DRenderer {
       ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(currentZone.width, y); ctx.stroke();
     }
 
-    // 2. Render World Objects & Scenery
     currentZone.decorations.forEach(deco => {
       switch (deco.type) {
         case 'PATH':
-          // Cobblestone Road with Brick Texture
           ctx.fillStyle = deco.color || '#273342';
           ctx.fillRect(deco.x, deco.y, deco.w || 600, deco.h || 50);
           ctx.strokeStyle = 'rgba(0,0,0,0.3)'; ctx.lineWidth = 1;
@@ -181,7 +157,6 @@ export class Canvas2DRenderer {
           break;
 
         case 'POND':
-          // Water Pond with Animated Ripple
           const r = deco.w || 80;
           const ripple = Math.sin(this.animTimer * 2) * 4;
           ctx.fillStyle = '#1b4965';
@@ -191,11 +166,9 @@ export class Canvas2DRenderer {
           break;
 
         case 'HOUSE':
-          // House Body with Wood Planks & Roof
           ctx.fillStyle = deco.color || '#3d2516';
           ctx.fillRect(deco.x, deco.y, deco.w || 140, deco.h || 120);
           ctx.strokeStyle = '#1d1007'; ctx.lineWidth = 3; ctx.strokeRect(deco.x, deco.y, deco.w || 140, deco.h || 120);
-          // Thatched Roof
           ctx.fillStyle = '#8b261d';
           ctx.beginPath();
           ctx.moveTo(deco.x - 12, deco.y);
@@ -203,7 +176,6 @@ export class Canvas2DRenderer {
           ctx.lineTo(deco.x + (deco.w || 140) + 12, deco.y);
           ctx.closePath(); ctx.fill();
           ctx.strokeStyle = '#ffd700'; ctx.lineWidth = 1; ctx.stroke();
-          // Window & Label
           ctx.fillStyle = '#e3b341'; ctx.fillRect(deco.x + 20, deco.y + 30, 24, 24);
           ctx.fillRect(deco.x + (deco.w || 140) - 44, deco.y + 30, 24, 24);
           if (deco.label) {
@@ -213,12 +185,9 @@ export class Canvas2DRenderer {
           break;
 
         case 'TREE':
-          // Shadow
-          ctx.fillStyle = 'rgba(0,0,0,0.3)';
+          ctx.fillStyle = 'rgba(0,0,0,0.4)';
           ctx.beginPath(); ctx.ellipse(deco.x, deco.y + 10, deco.w || 50, 15, 0, 0, Math.PI * 2); ctx.fill();
-          // Trunk
           ctx.fillStyle = '#4a2e1b'; ctx.fillRect(deco.x - 10, deco.y - 20, 20, 35);
-          // Leafy Crown Layers
           ctx.fillStyle = deco.color || '#194d22';
           ctx.beginPath(); ctx.arc(deco.x, deco.y - 40, (deco.w || 50), 0, Math.PI * 2); ctx.fill();
           ctx.fillStyle = '#236b2f';
@@ -226,15 +195,12 @@ export class Canvas2DRenderer {
           break;
 
         case 'LANTERN':
-          // Lantern Post with Warm Light Gradient
           ctx.fillStyle = '#30363d'; ctx.fillRect(deco.x - 4, deco.y - 45, 8, 45);
-          // Light Glow Radial Gradient
           const radGlow = ctx.createRadialGradient(deco.x, deco.y - 50, 5, deco.x, deco.y - 50, 60);
           radGlow.addColorStop(0, 'rgba(255, 215, 0, 0.4)');
           radGlow.addColorStop(1, 'rgba(255, 215, 0, 0)');
           ctx.fillStyle = radGlow;
           ctx.beginPath(); ctx.arc(deco.x, deco.y - 50, 60, 0, Math.PI * 2); ctx.fill();
-          // Glowing Orb
           ctx.fillStyle = deco.color || '#ffd700';
           ctx.beginPath(); ctx.arc(deco.x, deco.y - 50, 9, 0, Math.PI * 2); ctx.fill();
           break;
@@ -263,7 +229,6 @@ export class Canvas2DRenderer {
       }
     });
 
-    // 3. Render Zone Portal
     if (currentZone.portal) {
       const p = currentZone.portal;
       const portalGlow = ctx.createRadialGradient(p.x, p.y, 5, p.x, p.y, 45);
@@ -278,40 +243,31 @@ export class Canvas2DRenderer {
       ctx.fillText(`PORTAL (${p.targetZone})`, p.x, p.y - 50);
     }
 
-    // 4. Render Interactive NPCs (Elder Arcane & Merchant Roderick)
     currentZone.npcs.forEach(npc => {
-      // Drop Shadow
       ctx.fillStyle = 'rgba(0,0,0,0.4)';
       ctx.beginPath(); ctx.ellipse(npc.x, npc.y + 12, 18, 8, 0, 0, Math.PI * 2); ctx.fill();
 
-      // Character Body & Hat
       if (npc.role === 'ELDER') {
-        // Wizard Robe & Wizard Hat
         ctx.fillStyle = '#1f6beb'; ctx.beginPath(); ctx.arc(npc.x, npc.y, 18, 0, Math.PI * 2); ctx.fill();
         ctx.fillStyle = '#ffd700'; ctx.beginPath(); ctx.arc(npc.x, npc.y - 12, 10, Math.PI, Math.PI * 2); ctx.fill();
       } else {
-        // Merchant Crimson Tunic
         ctx.fillStyle = '#e3b341'; ctx.beginPath(); ctx.arc(npc.x, npc.y, 18, 0, Math.PI * 2); ctx.fill();
         ctx.fillStyle = '#da3633'; ctx.beginPath(); ctx.arc(npc.x, npc.y - 10, 8, 0, Math.PI * 2); ctx.fill();
       }
       ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 2; ctx.stroke();
 
-      // NPC Title
       ctx.fillStyle = '#ffd700'; ctx.font = 'bold 14px Cinzel, serif'; ctx.textAlign = 'center';
       ctx.fillText(npc.name, npc.x, npc.y - 28);
       ctx.fillStyle = '#e6edf3'; ctx.font = '12px Rajdhani, sans-serif';
       ctx.fillText('[Press E to Talk]', npc.x, npc.y + 36);
     });
 
-    // 5. Render Enemies & Boss Sprites
     currentZone.enemies.forEach(enemy => {
       if (enemy.hp > 0) {
-        // Shadow
         ctx.fillStyle = 'rgba(0,0,0,0.4)';
         ctx.beginPath(); ctx.ellipse(enemy.x, enemy.y + enemy.radius * 0.7, enemy.radius, enemy.radius * 0.4, 0, 0, Math.PI * 2); ctx.fill();
 
         if (enemy.isBoss) {
-          // Vortex Guardian Colossal Pulsing Boss Sprite
           const pulse = Math.sin(this.animTimer * 4) * 6;
           const bossGlow = ctx.createRadialGradient(enemy.x, enemy.y, 10, enemy.x, enemy.y, enemy.radius + 20 + pulse);
           bossGlow.addColorStop(0, 'rgba(218, 54, 51, 0.9)');
@@ -320,25 +276,21 @@ export class Canvas2DRenderer {
           ctx.fillStyle = bossGlow;
           ctx.beginPath(); ctx.arc(enemy.x, enemy.y, enemy.radius + 20 + pulse, 0, Math.PI * 2); ctx.fill();
 
-          // Swirling Vortex Core Ring
           ctx.strokeStyle = '#ffd700'; ctx.lineWidth = 4;
           ctx.beginPath(); ctx.arc(enemy.x, enemy.y, enemy.radius + pulse, 0, Math.PI * 2); ctx.stroke();
 
           ctx.fillStyle = '#1c080d';
           ctx.beginPath(); ctx.arc(enemy.x, enemy.y, enemy.radius * 0.8, 0, Math.PI * 2); ctx.fill();
         } else {
-          // Standard Enemies (Slime, Goblin, Archer, Mage, Tank)
           ctx.fillStyle = enemy.type === 'SLIME' ? '#3fb950' : (enemy.type === 'MAGE' ? '#a371f7' : '#f85149');
           ctx.beginPath(); ctx.arc(enemy.x, enemy.y, enemy.radius, 0, Math.PI * 2); ctx.fill();
           ctx.strokeStyle = '#30363d'; ctx.lineWidth = 2; ctx.stroke();
         }
 
-        // Enemy Name Label
         ctx.fillStyle = enemy.isBoss ? '#ffd700' : '#ffffff';
         ctx.font = enemy.isBoss ? 'bold 16px Cinzel, serif' : '13px Rajdhani, sans-serif'; ctx.textAlign = 'center';
         ctx.fillText(enemy.name, enemy.x, enemy.y - enemy.radius - 14);
 
-        // Enemy Health Bar
         const barWidth = enemy.radius * 2.5;
         const barHeight = 6;
         const hpRatio = Math.max(0, enemy.hp / enemy.maxHp);
@@ -348,39 +300,31 @@ export class Canvas2DRenderer {
       }
     });
 
-    // 6. Render Projectiles
     gsm.projectiles.forEach(p => {
       ctx.fillStyle = p.fromEnemy ? '#f85149' : '#58a6ff';
       ctx.beginPath(); ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2); ctx.fill();
     });
 
-    // 7. Render Detailed Hero Avatar Sprite
     const player = gsm.player;
-    // Hero Ground Shadow
     ctx.fillStyle = 'rgba(0,0,0,0.5)';
     ctx.beginPath(); ctx.ellipse(player.stats.x, player.stats.y + 12, 18, 8, 0, 0, Math.PI * 2); ctx.fill();
 
-    // Metallic Knight Blue Armor Body
     ctx.fillStyle = '#58a6ff';
     ctx.beginPath(); ctx.arc(player.stats.x, player.stats.y, player.stats.radius, 0, Math.PI * 2); ctx.fill();
     ctx.strokeStyle = '#ffd700'; ctx.lineWidth = 2.5; ctx.stroke();
 
-    // Helmet Gold Visor Notch
     ctx.fillStyle = '#ffd700';
     ctx.fillRect(player.stats.x - 6, player.stats.y - 4, 12, 5);
 
-    // Glowing Sword Blade
     ctx.fillStyle = '#ffffff'; ctx.shadowColor = '#58a6ff'; ctx.shadowBlur = 10;
     ctx.fillRect(player.stats.x + 12, player.stats.y - 14, 4, 20);
     ctx.shadowBlur = 0;
 
-    // Attack Range Highlight ring on Space
     if (gsm.input.isKeyDown(' ')) {
       ctx.strokeStyle = 'rgba(255, 215, 0, 0.6)'; ctx.lineWidth = 3;
       ctx.beginPath(); ctx.arc(player.stats.x, player.stats.y, 60, 0, Math.PI * 2); ctx.stroke();
     }
 
-    // Floating Damage / XP Numbers
     gsm.floatingTexts.forEach(ft => {
       ctx.globalAlpha = ft.alpha;
       ctx.fillStyle = ft.color;
@@ -398,7 +342,6 @@ export class Canvas2DRenderer {
     const player = gsm.player;
     const currentZone = gsm.world.getCurrentZone();
 
-    // Top-Left Player Stats RPG HUD Glassmorphism Card
     ctx.fillStyle = 'rgba(15, 20, 30, 0.9)';
     ctx.strokeStyle = '#c9a050'; ctx.lineWidth = 1.5;
     ctx.fillRect(15, 15, 250, 115);
@@ -407,7 +350,6 @@ export class Canvas2DRenderer {
     ctx.fillStyle = '#ffd700'; ctx.font = 'bold 16px Cinzel, serif'; ctx.textAlign = 'left';
     ctx.fillText(`Vortex Hero (Lvl ${player.stats.level})`, 28, 38);
 
-    // HP Bar
     const hpRatio = Math.max(0, player.stats.hp / player.stats.maxHp);
     ctx.fillStyle = '#161e2b'; ctx.fillRect(28, 48, 190, 13);
     ctx.fillStyle = '#f85149'; ctx.fillRect(28, 48, 190 * hpRatio, 13);
@@ -415,7 +357,6 @@ export class Canvas2DRenderer {
     ctx.fillStyle = '#ffffff'; ctx.font = '11px Rajdhani, sans-serif';
     ctx.fillText(`HP: ${Math.ceil(player.stats.hp)} / ${player.stats.maxHp}`, 35, 58);
 
-    // Mana Bar
     const manaRatio = Math.max(0, player.stats.mana / player.stats.maxMana);
     ctx.fillStyle = '#161e2b'; ctx.fillRect(28, 68, 190, 13);
     ctx.fillStyle = '#1f6beb'; ctx.fillRect(28, 68, 190 * manaRatio, 13);
@@ -423,7 +364,6 @@ export class Canvas2DRenderer {
     ctx.fillStyle = '#ffffff';
     ctx.fillText(`MP: ${Math.ceil(player.stats.mana)} / ${player.stats.maxMana}`, 35, 78);
 
-    // XP Bar
     const xpRatio = Math.max(0, player.stats.xp / player.stats.maxXp);
     ctx.fillStyle = '#161e2b'; ctx.fillRect(28, 88, 190, 11);
     ctx.fillStyle = '#3fb950'; ctx.fillRect(28, 88, 190 * xpRatio, 11);
@@ -431,7 +371,6 @@ export class Canvas2DRenderer {
     ctx.fillStyle = '#ffffff'; ctx.font = '10px Rajdhani, sans-serif';
     ctx.fillText(`XP: ${player.stats.xp} / ${player.stats.maxXp}`, 35, 96);
 
-    // Top-Center Quick Action Menu Bar
     ctx.fillStyle = 'rgba(15, 20, 30, 0.9)';
     ctx.fillRect(this.canvas.width / 2 - 200, 15, 400, 36);
     ctx.strokeStyle = '#c9a050'; ctx.lineWidth = 1.5; ctx.strokeRect(this.canvas.width / 2 - 200, 15, 400, 36);
@@ -439,7 +378,6 @@ export class Canvas2DRenderer {
     ctx.fillStyle = '#f0e6d2'; ctx.font = 'bold 13px Cinzel, serif'; ctx.textAlign = 'center';
     ctx.fillText('🎒[I] Inv   ⚡[K] Skills   📜[L] Quests   👤[C] Hero   📖[M] Guide', this.canvas.width / 2, 38);
 
-    // Gold & Zone Info (Top-Right Dynamic Positioning)
     const goldCardX = this.canvas.width - 280;
     ctx.fillStyle = 'rgba(15, 20, 30, 0.9)';
     ctx.fillRect(goldCardX, 15, 200, 70);
@@ -450,7 +388,6 @@ export class Canvas2DRenderer {
     ctx.fillStyle = '#bc8cff'; ctx.font = '14px Rajdhani, sans-serif';
     ctx.fillText(`📍 ${currentZone.name}`, goldCardX + 185, 62);
 
-    // INTERACTIVE PAUSE BUTTON ⏸️
     const pauseBtnX = this.canvas.width - 65;
     ctx.fillStyle = 'rgba(15, 20, 30, 0.9)';
     ctx.fillRect(pauseBtnX, 15, 50, 40);
@@ -459,7 +396,6 @@ export class Canvas2DRenderer {
     ctx.fillStyle = '#ffffff'; ctx.font = '22px system-ui'; ctx.textAlign = 'center';
     ctx.fillText('⏸️', pauseBtnX + 25, 43);
 
-    // MINIMAP RADAR OVERLAY (Bottom-Right)
     const mapX = this.canvas.width - 75;
     const mapY = this.canvas.height - 110;
     const mapR = 55;
@@ -470,11 +406,9 @@ export class Canvas2DRenderer {
     const scaleX = (mapR * 1.6) / currentZone.width;
     const scaleY = (mapR * 1.6) / currentZone.height;
 
-    // Player blip
     ctx.fillStyle = '#58a6ff';
     ctx.beginPath(); ctx.arc(mapX - mapR * 0.8 + player.stats.x * scaleX, mapY - mapR * 0.8 + player.stats.y * scaleY, 4, 0, Math.PI * 2); ctx.fill();
 
-    // Enemies blips
     currentZone.enemies.forEach(e => {
       if (e.hp > 0) {
         ctx.fillStyle = e.isBoss ? '#da3633' : '#f85149';
@@ -482,7 +416,6 @@ export class Canvas2DRenderer {
       }
     });
 
-    // NPCs blips
     currentZone.npcs.forEach(n => {
       ctx.fillStyle = '#3fb950';
       ctx.beginPath(); ctx.arc(mapX - mapR * 0.8 + n.x * scaleX, mapY - mapR * 0.8 + n.y * scaleY, 3, 0, Math.PI * 2); ctx.fill();
@@ -492,7 +425,6 @@ export class Canvas2DRenderer {
     ctx.strokeStyle = '#ffd700'; ctx.lineWidth = 2;
     ctx.beginPath(); ctx.arc(mapX, mapY, mapR, 0, Math.PI * 2); ctx.stroke();
 
-    // Boss Health Bar Overlay (if Boss in zone)
     const boss = currentZone.enemies.find(e => e.isBoss && e.hp > 0);
     if (boss) {
       const bossHpRatio = Math.max(0, boss.hp / boss.maxHp);

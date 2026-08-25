@@ -54,12 +54,15 @@ export class GameStateManager {
   }
 
   public update(deltaTime: number): void {
+    // Update UI visibility per state
+    this.menuContainer.updateVisibilityForState(this.currentState, this);
+
     const mouseClicked = this.input.isMouseJustClicked();
     const mousePos = this.canvas ? this.input.getCanvasMousePos(this.canvas) : { x: 0, y: 0 };
 
     switch (this.currentState) {
       case GameState.MAIN_MENU:
-        if (this.input.isKeyJustPressed(' ') || this.input.isKeyJustPressed('enter') || mouseClicked) {
+        if (this.input.isKeyJustPressed(' ') || this.input.isKeyJustPressed('enter')) {
           this.startNewGame();
         } else if (this.input.isKeyJustPressed('c') && SaveSystem.hasSave()) {
           this.continueGame();
@@ -69,13 +72,13 @@ export class GameStateManager {
         break;
 
       case GameState.MANUAL:
-        if (this.input.isKeyJustPressed(' ') || this.input.isKeyJustPressed('enter') || this.input.isKeyJustPressed('escape') || mouseClicked) {
+        if (this.input.isKeyJustPressed(' ') || this.input.isKeyJustPressed('enter') || this.input.isKeyJustPressed('escape')) {
           this.currentState = GameState.PLAYING;
         }
         break;
 
       case GameState.PLAYING:
-        if (mouseClicked && mousePos.x >= 960 && mousePos.x <= 1010 && mousePos.y >= 15 && mousePos.y <= 55) {
+        if (mouseClicked && mousePos.x >= this.camera.width - 65 && mousePos.x <= this.camera.width - 15 && mousePos.y >= 15 && mousePos.y <= 55) {
           this.currentState = GameState.PAUSED;
           return;
         }
@@ -90,7 +93,7 @@ export class GameStateManager {
         } else if (this.input.isKeyJustPressed('m')) {
           this.currentState = GameState.MANUAL;
         } else if (mouseClicked) {
-          if (mousePos.x >= 362 && mousePos.x <= 662) {
+          if (mousePos.x >= this.camera.width / 2 - 150 && mousePos.x <= this.camera.width / 2 + 150) {
             if (mousePos.y >= 240 && mousePos.y <= 285) this.currentState = GameState.PLAYING;
             else if (mousePos.y >= 300 && mousePos.y <= 345) this.saveCurrentGame();
             else if (mousePos.y >= 360 && mousePos.y <= 405) this.currentState = GameState.MANUAL;
@@ -135,7 +138,6 @@ export class GameStateManager {
     this.projectiles = [];
     this.floatingTexts = [];
     this.currentState = GameState.MANUAL;
-    this.menuContainer.addLog('[System] New Game started! Read the Game Manual to begin.');
   }
 
   public continueGame(): void {
@@ -149,7 +151,6 @@ export class GameStateManager {
       if (saveData.currentZone) this.world.switchZone(saveData.currentZone);
 
       this.currentState = GameState.PLAYING;
-      this.menuContainer.addLog('[System] Save data loaded successfully.');
     } else {
       this.startNewGame();
     }
@@ -168,7 +169,6 @@ export class GameStateManager {
       bossDefeated: false
     });
     this.addFloatingText('Game Saved!', this.player.stats.x, this.player.stats.y - 30, '#3fb950');
-    this.menuContainer.addLog('[SaveSystem] Progress saved to LocalStorage.');
   }
 
   private updatePlayingState(deltaTime: number): void {
@@ -177,7 +177,6 @@ export class GameStateManager {
       return;
     }
 
-    // Toggle Unified Menu Tabs
     if (this.input.isKeyJustPressed('i')) {
       this.menuContainer.toggleTab('inventory', this);
     }
@@ -191,11 +190,9 @@ export class GameStateManager {
       this.menuContainer.toggleTab('character', this);
     }
 
-    // Update UI Overlays
     this.menuContainer.updateQuestTracker(this);
     this.menuContainer.updateHotbar(this);
 
-    // Player update & movement
     this.player.update(deltaTime);
 
     let moveX = 0;
@@ -240,7 +237,6 @@ export class GameStateManager {
         this.player.stats.x = p.targetX;
         this.player.stats.y = p.targetY;
         this.addFloatingText(`Entered ${this.world.getCurrentZone().name}`, this.player.stats.x, this.player.stats.y - 40, '#58a6ff');
-        this.menuContainer.addLog(`[Zone] Entered ${this.world.getCurrentZone().name}`);
       }
     }
 
@@ -270,7 +266,6 @@ export class GameStateManager {
 
             if (this.player.isDead()) {
               this.currentState = GameState.GAME_OVER;
-              this.menuContainer.addLog('[Combat] Player was defeated in battle.');
             }
           }
         }
@@ -283,25 +278,21 @@ export class GameStateManager {
         const leveledUp = this.player.addXp(enemy.xpReward);
         this.player.stats.gold += enemy.goldReward;
         this.addFloatingText(`+${enemy.xpReward} XP  +${enemy.goldReward} Gold`, enemy.x, enemy.y, '#e3b341');
-        this.menuContainer.addLog(`[Combat] Defeated ${enemy.name}! (+${enemy.xpReward} XP, +${enemy.goldReward} Gold)`);
 
         if (leveledUp) {
           this.addFloatingText(`LEVEL UP! (Lvl ${this.player.stats.level})`, this.player.stats.x, this.player.stats.y - 45, '#3fb950');
-          this.menuContainer.addLog(`[Level Up] Reached Level ${this.player.stats.level}! Attributes increased.`);
         }
 
         const itemDrop = enemy.generateLoot();
         if (itemDrop) {
           this.addItemToInventory(itemDrop);
           this.addFloatingText(`Looted: ${itemDrop.name}`, enemy.x, enemy.y - 20, '#bc8cff');
-          this.menuContainer.addLog(`[Loot] Obtained ${itemDrop.name}`);
         }
 
         this.questLog.notifyKill(enemy.type);
 
         if (enemy.isBoss) {
           this.currentState = GameState.VICTORY;
-          this.menuContainer.addLog('[Victory] Defeated the Vortex Guardian Boss!');
         }
 
         currentZone.enemies.splice(i, 1);
@@ -366,11 +357,9 @@ export class GameStateManager {
       const healAmount = Math.floor(this.player.stats.maxHp * 0.40);
       this.player.stats.hp = Math.min(this.player.stats.maxHp, this.player.stats.hp + healAmount);
       this.addFloatingText(`+${healAmount} HP Healed!`, this.player.stats.x, this.player.stats.y - 30, '#3fb950');
-      this.menuContainer.addLog(`[Skill] Cast Divine Heal (+${healAmount} HP)`);
     } else {
       this.executePlayerAttack(skill.damageMultiplier, skill.range);
       this.addFloatingText(`Cast ${skill.name}!`, this.player.stats.x, this.player.stats.y - 30, '#bc8cff');
-      this.menuContainer.addLog(`[Skill] Cast ${skill.name}`);
     }
   }
 
