@@ -25,13 +25,10 @@ export class GameMenuContainer {
     }
 
     overlay.innerHTML = `
-      <!-- Top Bar: Right QuestTracker -->
-      <div style="display:flex;justify-direction:row-reverse;align-items:flex-start;width:100%;">
-        <!-- Right Panel: QuestTracker -->
-        <div id="quest-tracker" style="width:230px;background:rgba(22,27,34,0.85);border:1px solid #30363d;border-radius:6px;padding:8px;font-size:12px;pointer-events:auto;margin-right:60px;">
-          <div style="color:#3fb950;font-weight:bold;margin-bottom:4px;">🎯 Active Quests</div>
-          <div id="quest-tracker-content"></div>
-        </div>
+      <!-- Right Panel: QuestTracker Positioned Safely on Right (top: 95px, right: 15px) below Gold Card -->
+      <div id="quest-tracker" style="position:absolute;top:95px;right:15px;width:210px;background:rgba(22,27,34,0.85);border:1px solid #30363d;border-radius:6px;padding:8px;font-size:11px;pointer-events:auto;box-shadow:0 4px 12px rgba(0,0,0,0.5);">
+        <div style="color:#3fb950;font-weight:bold;margin-bottom:4px;">🎯 Active Quests</div>
+        <div id="quest-tracker-content"></div>
       </div>
 
       <!-- Center Unified GameMenuContainer Modal -->
