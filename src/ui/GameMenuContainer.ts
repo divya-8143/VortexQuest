@@ -3,12 +3,7 @@ import { gameRegistry } from '../data/GameRegistry';
 
 export class GameMenuContainer {
   public activeTab: string = 'hidden'; // 'hidden' | 'inventory' | 'skills' | 'quests' | 'character' | 'shop' | 'settings'
-  public chatLogs: string[] = [
-    '[System] Welcome to VortexQuest 2D RPG!',
-    '[System] Press WASD to move, Space to attack, 1-4/Q for skills, E to talk to NPCs.'
-  ];
   private containerEl: HTMLElement | null = null;
-  private chatEl: HTMLElement | null = null;
   private questTrackerEl: HTMLElement | null = null;
   private hotbarEl: HTMLElement | null = null;
 
@@ -30,16 +25,10 @@ export class GameMenuContainer {
     }
 
     overlay.innerHTML = `
-      <!-- Top Bar: Left ChatLog & Right QuestTracker -->
-      <div style="display:flex;justify-content:space-between;align-items:flex-start;width:100%;">
-        <!-- Left Panel: ChatLog -->
-        <div id="chat-log" style="width:240px;height:120px;background:rgba(22,27,34,0.85);border:1px solid #30363d;border-radius:6px;padding:8px;font-size:11px;overflow-y:auto;pointer-events:auto;">
-          <div style="color:#58a6ff;font-weight:bold;margin-bottom:4px;">📜 System Log</div>
-          <div id="chat-log-content"></div>
-        </div>
-
+      <!-- Top Bar: Right QuestTracker -->
+      <div style="display:flex;justify-direction:row-reverse;align-items:flex-start;width:100%;">
         <!-- Right Panel: QuestTracker -->
-        <div id="quest-tracker" style="width:230px;background:rgba(22,27,34,0.85);border:1px solid #30363d;border-radius:6px;padding:8px;font-size:12px;pointer-events:auto;">
+        <div id="quest-tracker" style="width:230px;background:rgba(22,27,34,0.85);border:1px solid #30363d;border-radius:6px;padding:8px;font-size:12px;pointer-events:auto;margin-right:60px;">
           <div style="color:#3fb950;font-weight:bold;margin-bottom:4px;">🎯 Active Quests</div>
           <div id="quest-tracker-content"></div>
         </div>
@@ -67,7 +56,6 @@ export class GameMenuContainer {
     `;
 
     this.containerEl = document.getElementById('menu-modal');
-    this.chatEl = document.getElementById('chat-log-content');
     this.questTrackerEl = document.getElementById('quest-tracker-content');
     this.hotbarEl = document.getElementById('hotbar');
 
@@ -87,15 +75,11 @@ export class GameMenuContainer {
   }
 
   public addLog(msg: string): void {
-    this.chatLogs.push(msg);
-    if (this.chatLogs.length > 30) this.chatLogs.shift();
-    this.updateChatLog();
+    // System Log box removed per user request
   }
 
   public updateChatLog(): void {
-    if (!this.chatEl) return;
-    this.chatEl.innerHTML = this.chatLogs.map(l => `<div style="margin-bottom:3px;">${l}</div>`).join('');
-    this.chatEl.scrollTop = this.chatEl.scrollHeight;
+    // System Log box removed per user request
   }
 
   public updateQuestTracker(gsm: GameStateManager): void {
