@@ -15,24 +15,23 @@ export class GameMenuContainer {
     const gameContainer = document.getElementById('game-container');
     if (!gameContainer) return;
 
-    // Check existing overlay
     let overlay = document.getElementById('unified-ui-overlay');
     if (!overlay) {
       overlay = document.createElement('div');
       overlay.id = 'unified-ui-overlay';
-      overlay.style.cssText = 'position:absolute;inset:0;pointer-events:none;display:flex;flex-direction:column;justify-content:space-between;padding:12px;font-family:system-ui,sans-serif;color:#e6edf3;box-sizing:border-box;';
+      overlay.style.cssText = 'position:absolute;inset:0;pointer-events:none;font-family:system-ui,sans-serif;color:#e6edf3;box-sizing:border-box;';
       gameContainer.appendChild(overlay);
     }
 
     overlay.innerHTML = `
-      <!-- Right Panel: QuestTracker Positioned Safely on Right (top: 95px, right: 15px) below Gold Card -->
+      <!-- Right Panel: QuestTracker Positioned Safely on Right below Gold Card -->
       <div id="quest-tracker" style="position:absolute;top:95px;right:15px;width:210px;background:rgba(22,27,34,0.85);border:1px solid #30363d;border-radius:6px;padding:8px;font-size:11px;pointer-events:auto;box-shadow:0 4px 12px rgba(0,0,0,0.5);">
         <div style="color:#3fb950;font-weight:bold;margin-bottom:4px;">🎯 Active Quests</div>
         <div id="quest-tracker-content"></div>
       </div>
 
       <!-- Center Unified GameMenuContainer Modal -->
-      <div id="menu-modal" style="display:none;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:680px;height:420px;background:rgba(13,17,23,0.95);border:2px solid #58a6ff;border-radius:8px;box-shadow:0 10px 30px rgba(0,0,0,0.8);pointer-events:auto;flex-direction:column;overflow:hidden;">
+      <div id="menu-modal" style="display:none;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:680px;height:420px;background:rgba(13,17,23,0.95);border:2px solid #58a6ff;border-radius:8px;box-shadow:0 10px 30px rgba(0,0,0,0.8);pointer-events:auto;flex-direction:column;overflow:hidden;z-index:20;">
         <!-- Tab Navigation Bar -->
         <div style="display:flex;background:#161b22;border-bottom:1px solid #30363d;">
           <button class="menu-tab-btn" data-tab="inventory" style="flex:1;padding:10px;background:none;border:none;color:#c9d1d9;font-weight:bold;cursor:pointer;">🎒 Inventory</button>
@@ -48,15 +47,14 @@ export class GameMenuContainer {
         <div id="menu-tab-view" style="flex:1;padding:16px;overflow-y:auto;font-size:13px;"></div>
       </div>
 
-      <!-- Bottom Bar: Hotbar -->
-      <div id="hotbar" style="display:flex;justify-content:center;gap:8px;width:100%;pointer-events:auto;"></div>
+      <!-- Bottom Bar: Skills Hotbar Pinned Exactly at Page Bottom (bottom: 20px, left: 50%) -->
+      <div id="hotbar" style="position:absolute;bottom:20px;left:50%;transform:translateX(-50%);display:flex;justify-content:center;gap:10px;pointer-events:auto;z-index:10;"></div>
     `;
 
     this.containerEl = document.getElementById('menu-modal');
     this.questTrackerEl = document.getElementById('quest-tracker-content');
     this.hotbarEl = document.getElementById('hotbar');
 
-    // Attach Tab Button Listeners
     document.querySelectorAll('.menu-tab-btn').forEach(btn => {
       btn.addEventListener('click', (e) => {
         const target = e.target as HTMLElement;
@@ -105,17 +103,16 @@ export class GameMenuContainer {
     let html = '';
     gsm.player.skills.forEach(skill => {
       const cd = skill.currentCooldown > 0 ? `${skill.currentCooldown.toFixed(1)}s` : skill.key.toUpperCase();
-      const style = skill.currentCooldown > 0 ? 'background:#21262d;border:1px solid #da3633;color:#8b949e;' : 'background:#161b22;border:1px solid #58a6ff;color:#fff;';
+      const style = skill.currentCooldown > 0 ? 'background:rgba(33,38,45,0.9);border:2px solid #da3633;color:#8b949e;' : 'background:rgba(22,27,34,0.9);border:2px solid #58a6ff;color:#fff;';
       html += `
-        <button class="hotbar-btn" data-key="${skill.key}" style="${style}width:54px;height:48px;border-radius:6px;font-size:18px;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;">
+        <button class="hotbar-btn" data-key="${skill.key}" style="${style}width:58px;height:52px;border-radius:8px;font-size:20px;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(0,0,0,0.6);transition:transform 0.1s;">
           <span>${skill.icon}</span>
-          <span style="font-size:10px;font-weight:bold;">${cd}</span>
+          <span style="font-size:11px;font-weight:bold;margin-top:2px;">${cd}</span>
         </button>
       `;
     });
     this.hotbarEl.innerHTML = html;
 
-    // Attach click triggers
     document.querySelectorAll('.hotbar-btn').forEach(btn => {
       btn.addEventListener('click', (e) => {
         const key = (e.currentTarget as HTMLElement).dataset.key;
