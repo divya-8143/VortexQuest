@@ -9,7 +9,7 @@ export class GameMenuContainer {
   private questTrackerEl: HTMLElement | null = null;
   private hotbarEl: HTMLElement | null = null;
   private mainMenuEl: HTMLElement | null = null;
-  private manualEl: HTMLElement | null = null;
+  private manualModalEl: HTMLElement | null = null;
 
   constructor() {
     this.injectUIOverlay();
@@ -35,9 +35,62 @@ export class GameMenuContainer {
         <button id="btn-manual" class="rpg-btn" style="width:340px;padding:16px 24px;font-size:20px;font-weight:bold;cursor:pointer;border-radius:8px;box-shadow:0 6px 20px rgba(0,0,0,0.8);">📖 GAME MANUAL & CONTROLS</button>
       </div>
 
-      <!-- Manual GUI Start Button -->
-      <div id="manual-gui-btn" style="display:none;position:absolute;bottom:45px;left:50%;transform:translateX(-50%);pointer-events:auto;z-index:25;">
-        <button id="btn-start-playing" class="rpg-btn" style="width:360px;padding:16px 24px;font-size:22px;font-weight:bold;cursor:pointer;border-radius:8px;background:linear-gradient(180deg, #2e7d32 0%, #1b5e20 100%);border-color:#4caf50;box-shadow:0 6px 20px rgba(0,0,0,0.8);">⚔️ START PLAYING NOW!</button>
+      <!-- Game Manual HTML Card Grid Modal -->
+      <div id="manual-card-modal" class="rpg-card" style="display:none;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:920px;height:520px;pointer-events:auto;flex-direction:column;padding:20px;z-index:30;box-shadow:0 10px 40px rgba(0,0,0,0.9);">
+        <div class="rpg-header" style="color:#ffd700;font-size:26px;font-weight:bold;text-align:center;margin-bottom:16px;">📖 VORTEX QUEST - GAME MANUAL & INSTRUCTIONS</div>
+
+        <!-- 4 Distinct Cards Grid -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;flex:1;overflow-y:auto;padding-right:4px;">
+          <!-- Card 1: Story & Objective -->
+          <div class="rpg-card" style="padding:14px;background:rgba(22,27,34,0.9);">
+            <div class="rpg-header" style="color:#ffd700;font-size:16px;font-weight:bold;margin-bottom:8px;">📜 1. STORY & OBJECTIVE</div>
+            <ul style="padding-left:18px;font-size:13px;line-height:1.5;color:#e6edf3;">
+              <li>You are the Vortex Hero tasked with saving the realm of Aetheria.</li>
+              <li>Explore 5 connected zones: Peaceful Village -> Green Forest -> Dark Forest -> Crystal Cave -> Final Dungeon.</li>
+              <li>Defeat the Vortex Guardian Boss to claim ultimate victory!</li>
+            </ul>
+          </div>
+
+          <!-- Card 2: Skills & Hotkeys -->
+          <div class="rpg-card" style="padding:14px;background:rgba(22,27,34,0.9);">
+            <div class="rpg-header" style="color:#bc8cff;font-size:16px;font-weight:bold;margin-bottom:8px;">⚡ 2. SKILLS & HOTKEYS</div>
+            <ul style="padding-left:18px;font-size:13px;line-height:1.5;color:#e6edf3;">
+              <li><strong>[ 1 ] Fire Slash</strong>: 200% weapon damage melee strike.</li>
+              <li><strong>[ 2 ] Vortex Dash</strong>: Forward evasive dash ability.</li>
+              <li><strong>[ 3 ] Lightning Storm</strong>: 250% AOE lightning strike.</li>
+              <li><strong>[ 4 ] Divine Heal</strong>: Restores 40% of Max HP.</li>
+              <li><strong>[ Q ] Vortex Annihilation</strong>: 400% Ultimate galaxy strike.</li>
+            </ul>
+          </div>
+
+          <!-- Card 3: Controls & Movement -->
+          <div class="rpg-card" style="padding:14px;background:rgba(22,27,34,0.9);">
+            <div class="rpg-header" style="color:#58a6ff;font-size:16px;font-weight:bold;margin-bottom:8px;">🎮 3. CONTROLS & MOVEMENT</div>
+            <ul style="padding-left:18px;font-size:13px;line-height:1.5;color:#e6edf3;">
+              <li><strong>Movement</strong>: WASD or Arrow Keys</li>
+              <li><strong>Basic Attack</strong>: Spacebar</li>
+              <li><strong>Talk / Shop</strong>: E key (near Elder or Merchant)</li>
+              <li><strong>Menus</strong>: I (Inventory), L (Quests), K (Skills), C (Hero)</li>
+              <li><strong>Pause / Save</strong>: ESC key or Click ⏸️ Button</li>
+            </ul>
+          </div>
+
+          <!-- Card 4: Progression & Saving -->
+          <div class="rpg-card" style="padding:14px;background:rgba(22,27,34,0.9);">
+            <div class="rpg-header" style="color:#3fb950;font-size:16px;font-weight:bold;margin-bottom:8px;">💾 4. PROGRESSION & SAVING</div>
+            <ul style="padding-left:18px;font-size:13px;line-height:1.5;color:#e6edf3;">
+              <li>Defeating enemies grants XP, Gold, and rare Loot drops.</li>
+              <li>Leveling up increases Max HP, Mana, Attack, and Defense.</li>
+              <li>Equip weapons & armor to boost hero attributes.</li>
+              <li>Click ⏸️ -> "Save Game" to persist progress to LocalStorage.</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Start Playing Button -->
+        <div style="display:flex;justify-content:center;margin-top:16px;">
+          <button id="btn-start-playing" class="rpg-btn" style="width:360px;padding:14px 24px;font-size:20px;font-weight:bold;cursor:pointer;border-radius:8px;background:linear-gradient(180deg, #2e7d32 0%, #1b5e20 100%);border-color:#4caf50;box-shadow:0 6px 20px rgba(0,0,0,0.8);">⚔️ START PLAYING NOW!</button>
+        </div>
       </div>
 
       <!-- Right Panel: QuestTracker Positioned Safely on Right (top: 95px, right: 15px) below Gold Card -->
@@ -71,7 +124,7 @@ export class GameMenuContainer {
     this.questTrackerEl = document.getElementById('quest-tracker');
     this.hotbarEl = document.getElementById('hotbar');
     this.mainMenuEl = document.getElementById('main-menu-gui');
-    this.manualEl = document.getElementById('manual-gui-btn');
+    this.manualModalEl = document.getElementById('manual-card-modal');
 
     document.querySelectorAll('.menu-tab-btn').forEach(btn => {
       btn.addEventListener('click', (e) => {
@@ -90,11 +143,10 @@ export class GameMenuContainer {
   public updateVisibilityForState(state: GameState, gsm: GameStateManager): void {
     if (state === GameState.MAIN_MENU) {
       if (this.mainMenuEl) this.mainMenuEl.style.display = 'flex';
-      if (this.manualEl) this.manualEl.style.display = 'none';
+      if (this.manualModalEl) this.manualModalEl.style.display = 'none';
       if (this.questTrackerEl) this.questTrackerEl.style.display = 'none';
       if (this.hotbarEl) this.hotbarEl.style.display = 'none';
 
-      // Update button click handlers
       const btnNew = document.getElementById('btn-new-game');
       const btnCont = document.getElementById('btn-continue-game');
       const btnMan = document.getElementById('btn-manual');
@@ -112,7 +164,7 @@ export class GameMenuContainer {
       if (btnMan) btnMan.onclick = () => { gsm.currentState = GameState.MANUAL; };
     } else if (state === GameState.MANUAL) {
       if (this.mainMenuEl) this.mainMenuEl.style.display = 'none';
-      if (this.manualEl) this.manualEl.style.display = 'flex';
+      if (this.manualModalEl) this.manualModalEl.style.display = 'flex';
       if (this.questTrackerEl) this.questTrackerEl.style.display = 'none';
       if (this.hotbarEl) this.hotbarEl.style.display = 'none';
 
@@ -120,7 +172,7 @@ export class GameMenuContainer {
       if (btnStart) btnStart.onclick = () => { gsm.currentState = GameState.PLAYING; };
     } else {
       if (this.mainMenuEl) this.mainMenuEl.style.display = 'none';
-      if (this.manualEl) this.manualEl.style.display = 'none';
+      if (this.manualModalEl) this.manualModalEl.style.display = 'none';
       if (this.questTrackerEl) this.questTrackerEl.style.display = 'block';
       if (this.hotbarEl) this.hotbarEl.style.display = 'flex';
     }
